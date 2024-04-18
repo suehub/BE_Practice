@@ -1,10 +1,18 @@
 package user;
 
 public class User {
-    private int seqId;
     private String userId;
     private String password;
     private String name;
+
+    public User() {
+        super();
+    }
+
+    public User(String userId, String name) {
+        this.userId = userId;
+        this.name = name;
+    }
 
     public String getPassword() {
         return password;
@@ -12,24 +20,6 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public User() {
-        super();
-    }
-
-    public User(int seqId, String userId, String name) {
-        this.seqId = seqId;
-        this.userId = userId;
-        this.name = name;
-    }
-
-    public int getseqId() {
-        return seqId;
-    }
-
-    public void setseqId(int seqId) {
-        this.seqId = seqId;
     }
 
     public String getuserId() {
@@ -51,7 +41,6 @@ public class User {
     @Override
     public String toString() {
         return "UserDto{" +
-                "seqId=" + seqId +
                 ", userId='" + userId + '\'' +
                 ", name='" + name + '\'' +
                 '}';

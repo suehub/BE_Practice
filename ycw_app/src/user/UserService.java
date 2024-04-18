@@ -7,6 +7,7 @@ import user.UserDao;
 import java.util.Scanner;
 
 public class UserService {
+
     Scanner sc = new Scanner(System.in);
 
     String driver = "com.mysql.cj.jdbc.Driver";
@@ -14,20 +15,17 @@ public class UserService {
     String schema = "practice_db"; // MySQL DATABASE 이름
     String userName = "admin"; //  MySQL 서버 아이디
     String password = "Ucheol92!4"; // MySQL 서버 비밀번호
-    UserDao dao;
+    UserDao dao = new UserDao();
 
-    public UserService() {
-        dao = new UserDao();
+    public ArrayList<User> selectAll() throws SQLException {
+        Connection con = null;
+        ArrayList<User> list = null;
+
         try {
             Class.forName(driver);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-    }
-
-    public ArrayList<User> selectAll() throws SQLException {
-        Connection con = null;
-        ArrayList<User> list = null;
 
         try {
             con = DriverManager.getConnection(url + "/" + schema, userName, password);
@@ -41,9 +39,14 @@ public class UserService {
     public ArrayList<User> selectOne() throws SQLException {
         Connection con = null;
         ArrayList<User> list = null;
-
         System.out.println("검색할 사용자의 계정 입력");
         String userId = sc.nextLine();
+
+        try {
+            Class.forName(driver);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
 
         try {
             con = DriverManager.getConnection(url + "/" + schema, userName, password);
@@ -67,19 +70,20 @@ public class UserService {
         user.setName(sc.next());
 
         try {
+            Class.forName(driver);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        try {
             con = DriverManager.getConnection(url + "/" + schema, userName, password);
             ArrayList<User> userCheck = dao.selectOne(con, user.getuserId());
             String resultMessage = "";
-
-            System.out.println(!userCheck.isEmpty());
 
             if (!userCheck.isEmpty()){
                 resultMessage = "이미 가입된 회원입니다.";
                 return resultMessage;
             }
-
-            ArrayList<User> allUserCheck = dao.selectAll(con);
-            user.setseqId(allUserCheck.size()+1);
 
             resultMessage = dao.insert(con, user);
             return resultMessage;

@@ -1,30 +1,44 @@
 package account;
 
 public class Account {
-    private String account_number;
-    private String product_type;
+    private String accountNum;
+    private String userId;
+    private String productType;
     private int balance;
 
-    public Account(String account_number, String product_type, int balance) {
-        this.account_number = account_number;
-        this.product_type = product_type;
+    public Account(){
+        super();
+    }
+
+    public Account(String accountNum, String userId, String productType, int balance) {
+        this.accountNum = accountNum;
+        this.userId = userId;
+        this.productType = productType;
         this.balance = balance;
     }
 
-    public String getAccount_number() {
-        return account_number;
+    public String getaccountNum() {
+        return accountNum;
     }
 
-    public void setAccount_number(String account_number) {
-        this.account_number = account_number;
+    public void setaccountNum(String accountNum) {
+        this.accountNum = accountNum;
     }
 
-    public String getProduct_type() {
-        return product_type;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setProduct_type(String product_type) {
-        this.product_type = product_type;
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getProductType() {
+        return productType;
+    }
+
+    public void setProductType(String productType) {
+        this.productType = productType;
     }
 
     public int getBalance() {
@@ -33,5 +47,15 @@ public class Account {
 
     public void setBalance(int balance) {
         this.balance = balance;
+    }
+
+    @Override
+    public String toString() {
+        return "Account{" +
+                "accountNum='" + accountNum + '\'' +
+                ", userId='" + userId + '\'' +
+                ", productType='" + productType + '\'' +
+                ", balance=" + balance +
+                '}';
     }
 }
