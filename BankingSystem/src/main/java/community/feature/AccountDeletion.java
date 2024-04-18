@@ -11,8 +11,9 @@ public class AccountDeletion {
   public AccountDeletion(Scanner sc) {
     this.sc = sc;
     System.out.println("AccountDeletion created");
+  }
+  public void run(){
     deleteAccount();
-
   }
 
   private void deleteAccount() {

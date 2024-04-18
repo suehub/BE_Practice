@@ -4,7 +4,6 @@ import community.db.ConnectionFactory;
 import community.exceptions.GlobalExceptionConfig;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Objects;
 import java.util.Scanner;
@@ -24,27 +23,18 @@ public class AccountDeposit {
     depositAmount();
   }
 
-  private void setAccountNum(int accountNum) {
-    this.accountNum = accountNum;
-  }
-
   void accountCheck() {
     System.out.println("please enter your account number: ");
-    PreparedStatement ps;
-    ResultSet rs;
     String sql = "SELECT * FROM account WHERE account_num = ?";
-    int account = sc.nextInt();
-    this.accountNum=account;
+    this.accountNum= sc.nextInt();
     try {
       Connection con = ConnectionFactory.getConnection();
-      ps = Objects.requireNonNull(con).prepareStatement(sql);
+      PreparedStatement ps = Objects.requireNonNull(con).prepareStatement(sql);
       ps.setInt(1, accountNum);
-      rs = ps.executeQuery();
-      if (!rs.next()) {
+      if (!ps.executeQuery().next()) {
         System.out.println("Account not found");
-        return ;
+        throw new RuntimeException("Account not found");
       }
-      System.out.println("Account Number: " + rs.getString("account_num"));
     } catch (Exception e) {
       GlobalExceptionConfig.log(e);
     }

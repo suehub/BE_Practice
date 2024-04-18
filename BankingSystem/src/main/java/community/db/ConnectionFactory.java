@@ -6,7 +6,6 @@ import java.sql.DriverManager;
 
 public class ConnectionFactory {
   public static Connection getConnection() {
-    System.out.println("Connection created");
     try{
       Class.forName("com.mysql.cj.jdbc.Driver");
       Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/bank_system", "root", "root");

@@ -5,6 +5,9 @@ import java.util.Scanner;
 
 public class ShowMenu {
   public ShowMenu(){
+
+  }
+  public void showMenu(){
     System.out.println("Welcome to the Banking System");
     System.out.println("1. Search Account");
     System.out.println("2. Deposit");

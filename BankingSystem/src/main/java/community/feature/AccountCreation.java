@@ -16,6 +16,8 @@ public class AccountCreation {
     System.out.println("AccountCreation created");
     System.out.println("please enter the details to create an account");
     System.out.println("what is your name? :");
+  }
+  public void run(){
     AccountCreationDB();
   }
 
@@ -24,11 +26,9 @@ public class AccountCreation {
     LocalDateTime accountOpen = LocalDateTime.now();
     int AccountType = 1;
 
-    Connection con = ConnectionFactory.getConnection();
     PreparedStatement ps;
-    String sql;
-    sql = "insert into account (account_num, account_open, account_type) values (?,?,?)";
-    try{
+    String sql = "insert into account (account_num, account_open, account_type) values (?,?,?)";
+    try(Connection con = ConnectionFactory.getConnection()){
       ps = Objects.requireNonNull(con).prepareStatement(sql);
       ps.setString(1, accountNum);
       ps.setTimestamp(2, Timestamp.valueOf(accountOpen));
