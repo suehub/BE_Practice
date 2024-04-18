@@ -17,16 +17,19 @@ public class UserService {
     String password = "Ucheol92!4"; // MySQL 서버 비밀번호
     UserDao dao = new UserDao();
 
-    public ArrayList<User> selectAll() throws SQLException {
-        Connection con = null;
-        ArrayList<User> list = null;
-
+    public void checkDriver() {
         try {
             Class.forName(driver);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
+    }
 
+    public ArrayList<User> selectAll() throws SQLException {
+        Connection con = null;
+        ArrayList<User> list;
+
+        checkDriver();
         try {
             con = DriverManager.getConnection(url + "/" + schema, userName, password);
             list = dao.selectAll(con);
@@ -38,10 +41,15 @@ public class UserService {
 
     public ArrayList<User> selectOne() throws SQLException {
         Connection con = null;
-        ArrayList<User> list = null;
+        ArrayList<User> list;
+        System.out.println("----------------------------------");
+        System.out.println("            사용자 조회             ");
+        System.out.println("----------------------------------");
         System.out.println("검색할 사용자의 계정 입력");
+        System.out.print("ID: ");
         String userId = sc.nextLine();
 
+        checkDriver();
         try {
             Class.forName(driver);
         } catch (ClassNotFoundException e) {
@@ -61,27 +69,25 @@ public class UserService {
         Connection con = null;
         User user = new User();
 
-        System.out.println("신규 가입 정보 입력");
-        System.out.print("\nid : ");
-        user.setuserId(sc.next());
-        System.out.print("\npw : ");
-        user.setPassword(sc.next());
-        System.out.print("\nname: ");
-        user.setName(sc.next());
+        System.out.println("----------------------------------");
+        System.out.println("         신규 가입 정보 입력");
+        System.out.println("----------------------------------");
+        System.out.print("id : ");
+        user.setuserId(sc.nextLine());
+        System.out.print("pw : ");
+        user.setPassword(sc.nextLine());
+        System.out.print("name: ");
+        user.setName(sc.nextLine());
+        System.out.println("----------------------------------");
 
-        try {
-            Class.forName(driver);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-
+        checkDriver();
         try {
             con = DriverManager.getConnection(url + "/" + schema, userName, password);
             ArrayList<User> userCheck = dao.selectOne(con, user.getuserId());
-            String resultMessage = "";
+            String resultMessage;
 
             if (!userCheck.isEmpty()){
-                resultMessage = "이미 가입된 회원입니다.";
+                resultMessage = "[Error] 이미 가입된 회원입니다.";
                 return resultMessage;
             }
 

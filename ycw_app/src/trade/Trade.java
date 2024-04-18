@@ -1,26 +1,48 @@
 package trade;
 
 public class Trade {
-    private String request_account;
+    private int tradeId;
+    private String requestAccount;
     private String action;
-    private String target_account;
+    private String targetAccount;
     private int amount;
-    private int result;
+    private int balance;
 
-    public Trade(String request_account, String action, String target_account, int amount, int result) {
-        this.request_account = request_account;
+    public Trade() {
+        super();
+    }
+
+    public Trade(int tradeId, String requestAccount, String action, String targetAccount, int amount, int balance) {
+        this.tradeId = tradeId;
+        this.requestAccount = requestAccount;
         this.action = action;
-        this.target_account = target_account;
+        this.targetAccount = targetAccount;
         this.amount = amount;
-        this.result = result;
+        this.balance = balance;
     }
 
-    public String getRequest_account() {
-        return request_account;
+    public int getTradeId() {
+        return tradeId;
     }
 
-    public void setRequest_account(String request_account) {
-        this.request_account = request_account;
+    public void setTradeId(int tradeId) {
+        this.tradeId = tradeId;
+    }
+
+    public String getRequestAccount() {
+        return requestAccount;
+    }
+
+    public void setRequestAccount(String requestAccount) {
+        this.requestAccount = requestAccount;
+    }
+
+    public String getTargetAccount() {
+        return targetAccount;
+    }
+
+    public void setTargetAccount(String targetAccount) {
+        this.targetAccount = targetAccount;
     }
 
     public String getAction() {
@@ -39,19 +61,23 @@ public class Trade {
         this.amount = amount;
     }
 
-    public String getTarget_account() {
-        return target_account;
+    public int getBalance() {
+        return balance;
     }
 
-    public void setTarget_account(String target_account) {
-        this.target_account = target_account;
+    public void setBalance(int balance) {
+        this.balance = balance;
     }
 
-    public int getResult() {
-        return result;
-    }
-
-    public void setResult(int result) {
-        this.result = result;
+    @Override
+    public String toString() {
+        return "Trade{" +
+                "tradeId=" + tradeId +
+                ", requestAccount='" + requestAccount + '\'' +
+                ", action='" + action + '\'' +
+                ", targetAccount='" + targetAccount + '\'' +
+                ", amount=" + amount +
+                ", balance=" + balance +
+                '}';
     }
 }

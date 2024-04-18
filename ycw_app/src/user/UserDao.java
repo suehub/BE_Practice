@@ -48,8 +48,8 @@ public class UserDao {
 
     public String insert(Connection con, User user) throws SQLException {
         PreparedStatement pstmt = null;
-        boolean result = false;
-        String resultMessage = "";
+        boolean result;
+        String resultMessage;
         try {
             String sql = "insert into Users values(?,?,?)";
             pstmt = con.prepareStatement(sql);
@@ -58,13 +58,13 @@ public class UserDao {
             pstmt.setString(3,user.getName());
             result = pstmt.execute(); // 성공시 false, 실패시 true
             if (!result) {
-                resultMessage = user.getuserId() + "님의 가입이 완료되었습니다.";
+                resultMessage = "[Success] " +user.getuserId() + "님의 가입이 완료되었습니다.";
             } else {
-                resultMessage = "회원가입에 실패하였습니다.";
+                resultMessage = "[Error] 회원가입에 실패하였습니다.";
             }
         } finally {
             con.close();
-            pstmt.close();
+            if(pstmt!=null) pstmt.close();
         }
         return resultMessage;
     }

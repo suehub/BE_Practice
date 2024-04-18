@@ -1,6 +1,6 @@
 package account;
 
-import user.User;
+import trade.Trade;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -12,8 +12,9 @@ public class AccountDao {
         ResultSet rs = null;
         ArrayList<Account> list = new ArrayList<>();
         try {
-            String sql = "select account_number, Users_user_id, product_type, balance from Accounts";
+            String sql = "select account_number, Users_user_id, product_type, balance from Accounts where Users_user_id = ?;";
             pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, userId);
             rs = pstmt.executeQuery();
             while (rs.next()) {
                 String accountNum = rs.getString(1);
@@ -74,7 +75,7 @@ public class AccountDao {
             }
         } finally {
             con.close();
-            pstmt.close();
+            if(pstmt!=null)pstmt.close();
         }
         return resultMessage;
     }
@@ -95,8 +96,34 @@ public class AccountDao {
             }
         } finally {
             con.close();
-            pstmt.close();
+            if(pstmt!=null) pstmt.close();
         }
+        return resultMessage;
+    }
+
+    public String depositUpdate(Connection con, Trade trade) throws SQLException {
+        PreparedStatement pstmt = null;
+        boolean result;
+        String resultMessage;
+
+        try {
+            String sql = "update Accounts set balance = ? where account_number = ?;";
+            pstmt = con.prepareStatement(sql);
+            pstmt.setInt(1, trade.getBalance());
+            pstmt.setInt(2,trade.getBalance());
+            result = pstmt.execute();
+            if (!result) {
+                resultMessage = trade.getTargetAccount() + "에 " +
+                                trade.getAmount() + "원" +
+                                trade.getAction() +"되었습니다.";
+            } else {
+                resultMessage = trade.getAction() + "에 실패하였습니다.";
+            }
+        } finally {
+            con.close();
+            if(pstmt!=null) pstmt.close();
+        }
+
         return resultMessage;
     }
 

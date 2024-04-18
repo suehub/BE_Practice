@@ -2,11 +2,13 @@ package account;
 
 import account.Account;
 import account.AccountDao;
+import trade.Trade;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import java.lang.Math;
 
@@ -66,9 +68,11 @@ public class AccountService {
 
     public ArrayList<Account> selectAll() throws SQLException {
         Connection con = null;
-        ArrayList<Account> list = null;
+        ArrayList<Account> list;
 
+        System.out.println("----------------------------------");
         System.out.println("검색할 사용자의 계정 입력");
+        System.out.print("ID: ");
         String userId = sc.nextLine();
 
         checkDriver();
@@ -84,7 +88,7 @@ public class AccountService {
 
     public ArrayList<Account> selectOne() throws SQLException {
         Connection con = null;
-        ArrayList<Account> list = null;
+        ArrayList<Account> list;
 
         System.out.println("검색할 계좌번호 입력");
         String accountNum = sc.nextLine();
@@ -102,11 +106,10 @@ public class AccountService {
 
     public String delete() throws SQLException {
         Connection con = null;
+        checkDriver();
 
         System.out.println("해지할 계좌번호 입력");
         String accountNum = sc.next();
-
-        checkDriver();
 
         try {
             con = DriverManager.getConnection(url + "/" + schema, userName, password);
@@ -124,6 +127,24 @@ public class AccountService {
         } finally {
             if(con!=null) con.close();
         }
+    }
+
+    public String UpdateOne(Trade trade) throws SQLException {
+        Connection con = null;
+        String result;
+
+        System.out.println(trade.getAction() + " 계좌 입력");
+        String accountNum = sc.nextLine();
+
+        checkDriver();
+        try {
+            con = DriverManager.getConnection(url + "/" + schema, userName, password);
+            result = dao.depositUpdate(con, trade);
+        } finally {
+            if(con!=null) con.close();
+        }
+
+        return result;
     }
 
 }
