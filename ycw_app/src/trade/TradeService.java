@@ -2,11 +2,10 @@ package trade;
 
 import account.Account;
 import account.AccountDao;
-import user.User;
-import user.UserDao;
+import page.PagePrinter;
+import repository.DriverConnector;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -14,28 +13,21 @@ import java.util.Scanner;
 public class TradeService {
 
     Scanner sc = new Scanner(System.in);
-
-    String driver = "com.mysql.cj.jdbc.Driver";
-    String url = "jdbc:mysql://practice-mysql.cvdyoyfefnzk.ap-northeast-2.rds.amazonaws.com"; // MySQL 서버 주소
-    String schema = "practice_db"; // MySQL DATABASE 이름
-    String userName = "admin"; //  MySQL 서버 아이디
-    String password = "Ucheol92!4"; // MySQL 서버 비밀번호
+    DriverConnector driverConnector = new DriverConnector();
     AccountDao accountDao = new AccountDao();
     TradeDao dao = new TradeDao();
-
 
     public String insert(int selectNum) throws SQLException {
         Connection con = null;
         Trade trade = new Trade();
 
         // 거래정보 입력 루프
-        trade = inputTradeInfo(con, trade, selectNum);
+        trade = PagePrinter.inputTradeInfo(selectNum);
 
         // SQL 실행
         String resultMessage;
-        checkDriver();
+
         try {
-            con = DriverManager.getConnection(url + "/" + schema, userName, password);
             resultMessage = dao.insert(con, trade);
             System.out.println(resultMessage);
             resultMessage = accountDao.updateOne(con,trade,false);
@@ -48,88 +40,20 @@ public class TradeService {
     public String transfer(int selectNum) throws SQLException {
         Connection con = null;
         Trade trade = new Trade();
-
-        // 거래정보 입력 루프
-        trade = inputTradeInfo(con, trade, selectNum);
-
-        // SQL 실행
-        String resultMessage;
-        checkDriver();
-        try {
-            con = DriverManager.getConnection(url + "/" + schema, userName, password);
-            resultMessage = dao.insert(con, trade);
-            System.out.println(resultMessage);
-            // 요청자 계좌 업데이트
-            resultMessage = accountDao.updateOne(con,trade,true);
-            // 수령자 계좌 업데이트
-            resultMessage = accountDao.updateOne(con,trade,false);
-            return resultMessage;
-        } finally {
-            if(con!=null) con.close();
-        }
-    }
-
-    public String selectAccountHistory() throws SQLException {
-        Connection con = null;
-        Trade trade = new Trade();
-
-        String user_id = sc.next();
-
-
-        String resultMessage = "";
-
-        return resultMessage;
-    }
-
-
-    public void checkDriver() {
-        try {
-            Class.forName(driver);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public Trade inputTradeInfo(Connection con, Trade trade, int selectNum) {
+        boolean infoError = true;
         ArrayList<Account> requestList = new ArrayList<>();
         ArrayList<Account> targetList = new ArrayList<>();
-        Boolean infoError = true;
         int newTarBalance;
         int newReqBalance;
 
-        switch (selectNum) {
-            case 6 -> trade.setAction("입금");
-            case 7 -> trade.setAction("출금");
-            case 8 -> trade.setAction("송금");
-        }
+        // 거래정보 입력 루프
 
         do {
-            System.out.println("----------------------------------");
-            System.out.println("          "+ trade.getAction() +" 정보 입력");
-            System.out.println("----------------------------------");
-            System.out.print("거래번호: ");
-            trade.setTradeId(sc.nextInt());
-            System.out.print("신청자 ID: ");
-            trade.setUserId(sc.next());
-            switch (trade.getAction()) {
-                case "입금", "출금" -> {
-                    System.out.print( trade.getAction() + " 계좌: ");
-                    trade.setRequestAccount("-");
-                }
-                case "송금" -> {
-                    System.out.print("출금 계좌: ");
-                    trade.setRequestAccount(sc.next());
-                    System.out.print("송금 계좌: ");
-                }
-            }
-            trade.setTargetAccount(sc.next());
-            System.out.print(trade.getAction() + " 금액: ");
-            trade.setAmount(sc.nextInt());
-            System.out.println("----------------------------------");
-
+            // 사용자 입력 가져옴
+            trade = PagePrinter.inputTradeInfo(selectNum);
             // 계좌 잔액조회
+            con = driverConnector.connectDriver();
             try {
-                con = DriverManager.getConnection(url + "/" + schema, userName, password);
                 if (trade.getAction() == "송금") {
                     requestList = accountDao.selectOne(con, trade.getRequestAccount());
                 }
@@ -169,9 +93,36 @@ public class TradeService {
                 }
                 trade.setTarBalance(newTarBalance);
             }
+
             infoError = false;
         } while (infoError == true);
 
-        return trade;
+        // SQL 실행
+        String resultMessage;
+        con = driverConnector.connectDriver();
+        try {
+            resultMessage = dao.insert(con, trade);
+            System.out.println(resultMessage);
+            // 요청자 계좌 업데이트
+            resultMessage = accountDao.updateOne(con,trade,true);
+            // 수령자 계좌 업데이트
+            resultMessage = accountDao.updateOne(con,trade,false);
+            return resultMessage;
+        } finally {
+            if(con!=null) con.close();
+        }
     }
+
+    public String selectAccountHistory() throws SQLException {
+        Connection con = null;
+        Trade trade = new Trade();
+
+        String user_id = sc.next();
+
+
+        String resultMessage = "";
+
+        return resultMessage;
+    }
+
 }

@@ -5,6 +5,7 @@ import account.AccountDao;
 import trade.Trade;
 import user.User;
 import user.UserDao;
+import repository.DriverConnector;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -16,23 +17,10 @@ import java.lang.Math;
 
 public class AccountService {
     Scanner sc = new Scanner(System.in);
-
-    final String driver = "com.mysql.cj.jdbc.Driver";
-    final String url = "jdbc:mysql://practice-mysql.cvdyoyfefnzk.ap-northeast-2.rds.amazonaws.com"; // MySQL 서버 주소
-    final String schema = "practice_db"; // MySQL DATABASE 이름
-    final String userName= "admin"; //  MySQL 서버 아이디
-    final String password = "Ucheol92!4"; // MySQL 서버 비밀번호
+    DriverConnector driverConnector = new DriverConnector();
     AccountDao dao = new AccountDao();
     UserDao userDao = new UserDao();
 
-
-    public void checkDriver() {
-        try {
-            Class.forName(driver);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
 
     public String insert() throws SQLException {
         Connection con = null;
@@ -47,9 +35,8 @@ public class AccountService {
         account.setProductType("예금");
         System.out.println(account.getUserId());
 
-        checkDriver();
+        con = driverConnector.connectDriver();
         try {
-            con = DriverManager.getConnection(url + "/" + schema, userName, password);
             ArrayList<Account> accountCheck = new ArrayList<>();
 
             // 계좌번호 난수 생성하고 중복체크, 중복시 루프
@@ -75,42 +62,30 @@ public class AccountService {
         ArrayList<Account> accountlist;
         ArrayList<User> userList = new ArrayList<>();
         String resultMessage;
-        String userId = "";
+        String userId = ""; // 수정필요!!
 
-        Boolean infoError = true;
-        do {
-            System.out.println("----------------------------------");
-            System.out.println("[input] 계좌를 조회할 사용자의 계정 입력"); // 로그인 기능 구현 후엔 자신의 계정 userId에 자동 할당
-            System.out.print("- ID: ");
-            userId = sc.nextLine();
-
-            try {
-                con = DriverManager.getConnection(url + "/" + schema, userName, password);
-                userList = userDao.selectOne(con, userId);
-                if (userList.isEmpty()) {
-                    System.out.println("존재하지 않는 계정입니다.");
-                    continue;
-                }
-            } catch (SQLException e){}
-
-            infoError = false;
-        } while (infoError);
-
-        checkDriver();
+        con = driverConnector.connectDriver();
         try {
-            con = DriverManager.getConnection(url + "/" + schema, userName, password);
             accountlist = dao.selectAll(con, userId);
         } finally {
             if(con!=null) con.close();
         }
         // 결과 메시지 생성
-        resultMessage = "----------------------------------";
-        resultMessage += ("\n  " + userId + "님의 계좌 내역");
-        resultMessage += "----------------------------------";
+        resultMessage = "----------------------------------\n";
+        resultMessage += ("\n      " + userId + "님의 계좌 내역\n");
+        resultMessage += "\n----------------------------------";
+        resultMessage += "\nno | 상품 |   계좌번호   | 잔액     ";
+        resultMessage += "\n----------------------------------";
 
+        Account myAccount = new Account();
         for (int i = 0; i < accountlist.size(); i++) {
-            resultMessage += ("\n" + i + ". " + accountlist.get(i).toString());
+            myAccount = accountlist.get(i);
+            resultMessage += ("\n " + (i+1)
+                             + " | " + myAccount.getProductType()
+                             + " | " + myAccount.getaccountNum()
+                             + " | " + myAccount.getBalance());
         }
+
 
         return resultMessage;
     }
@@ -125,9 +100,8 @@ public class AccountService {
         System.out.println("[input] 계좌번호: ");
         String accountNum = sc.next();
 
-        checkDriver();
+        con = driverConnector.connectDriver();
         try {
-            con = DriverManager.getConnection(url + "/" + schema, userName, password);
             accountList = dao.selectOne(con, accountNum);
         } finally {
             if(con!=null) con.close();
@@ -137,13 +111,12 @@ public class AccountService {
 
     public String delete() throws SQLException {
         Connection con = null;
-        checkDriver();
 
         System.out.println("해지할 계좌번호 입력");
         String accountNum = sc.next();
 
+        con = driverConnector.connectDriver();
         try {
-            con = DriverManager.getConnection(url + "/" + schema, userName, password);
             ArrayList<Account> accountCheck = dao.selectOne(con, accountNum);
             String resultMessage = "";
 
@@ -167,9 +140,8 @@ public class AccountService {
         System.out.println(trade.getAction() + " 계좌 입력");
         String accountNum = sc.nextLine();
 
-        checkDriver();
+        con = driverConnector.connectDriver();
         try {
-            con = DriverManager.getConnection(url + "/" + schema, userName, password);
             resultMessage = dao.updateOne(con, trade,false);
         } finally {
             if(con!=null) con.close();

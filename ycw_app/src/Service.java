@@ -1,6 +1,7 @@
 import account.Account;
 import account.AccountService;
-import trade.Trade;
+import page.PagePrinter;
+import page.Status;
 import trade.TradeService;
 import user.User;
 import user.UserService;
@@ -13,20 +14,31 @@ public class Service {
 
     Scanner sc = new Scanner(System.in);
 
-    void serviceMenu (int selectNum){
-        switch (selectNum) {
-            case 1, 2 -> userService(selectNum);
-            case 3, 4, 5  -> accountService(selectNum);
-            case 6, 7, 8 -> tradeService(selectNum);
+    void serviceMenu (Status status){
+        switch (status.getWorkNum()) {
+            case 0 -> loginService(status);
+            case 1 -> userService(status.getWorkNum());
+            case 3, 4, 5  -> accountService(status.getWorkNum());
+            case 6, 7, 8 -> tradeService(status.getWorkNum());
             default -> throw new IllegalStateException("[Error] 잘못된 입력 입니다.");
         }
     }
 
-    void userService (int selectNum){
+    void loginService(Status status) {
+        UserService service = new UserService();
+        User user = PagePrinter.loginPage();
+        try {
+            service.logIn(user);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    void userService (int workNum) {
         UserService service = new UserService();
         String resultMessage = "";
 
-        switch (selectNum){
+        switch (workNum){
             case 1 -> {
                 try {
                     resultMessage = service.insert();
@@ -36,22 +48,20 @@ public class Service {
             }
             case 2 -> {
                 try {
-                    resultMessage = service.selectOne();
+                    resultMessage = service.selectOne("");
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
-                outputMessage(resultMessage);
             }
         }
     }
 
-    void accountService(int selectNum) {
+    void accountService(int workNum) {
         AccountService service = new AccountService();
         ArrayList<Account> accountList;
         String resultMessage = "";
-        int workNum = 0;
 
-        switch (selectNum) {
+        switch (workNum) {
             case 3 -> { // 계좌 개설
                 try {
                     resultMessage = service.insert();
@@ -64,9 +74,7 @@ public class Service {
                 try {
                     resultMessage = service.selectMyAllAccount();
                     System.out.println(resultMessage);
-
-
-
+                    System.out.println("[info] 거래내역 ");
                     accountList = service.selectMyAccount();
                 } catch (SQLException e) {
                     e.printStackTrace();
@@ -79,55 +87,30 @@ public class Service {
                     e.printStackTrace();
                 }
             }
-            default -> throw new IllegalStateException("Unexpected value: " + selectNum);
+            default -> throw new IllegalStateException("Unexpected value: " + workNum);
         }
-        outputMessage(resultMessage);
     }
 
-    void tradeService(int selectNum) {
+    void tradeService(int workNum) {
         TradeService service = new TradeService();
         String resultMessage = "";
 
-        switch (selectNum) {
+        switch (workNum) {
             case 6, 7 -> {
                 try {
-                    resultMessage = service.insert(selectNum);
+                    resultMessage = service.insert(workNum);
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
             }
             case 8 -> {
                 try {
-                    resultMessage = service.transfer(selectNum);
+                    resultMessage = service.transfer(workNum);
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
             }
         }
 
-    }
-    
-    int selectWork() {
-        System.out.println("----------------------------------");
-        System.out.println("             조회 메뉴              ");
-        System.out.println("----------------------------------");
-        System.out.println("1. 계좌번호로 조회");
-        System.out.println("2. 내 계좌 전체 조회");
-        int workNum;
-        do {
-            workNum = sc.nextInt();
-            if (workNum != 1 && workNum != 2) {
-                System.out.println("잘못된 입력입니다.");
-            }
-        } while (workNum != 1 && workNum != 2);
-
-        return workNum;
-    }
-
-    void outputMessage (String resultMessage) {
-        System.out.println(resultMessage);
-        System.out.println("----------------------------------");
-        System.out.println("[Info] 아무 키나 입력하여 계속");
-        String a = sc.next();
     }
 }

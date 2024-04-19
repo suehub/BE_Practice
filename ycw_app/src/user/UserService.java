@@ -39,23 +39,34 @@ public class UserService {
         return list;
     }
 
-    public String selectOne() throws SQLException {
+    public String logIn(User user) throws SQLException {
+        Connection con = null;
+        ArrayList<User> userlist;
+        String resultMessage = "";
+
+        // SQL 실행
+        checkDriver();
+        try {
+            con = DriverManager.getConnection(url + "/" + schema, userName, password);
+            userlist = dao.selectOne(con, user.getuserId(), user.getPassword());
+        } finally {
+            if(con!=null) con.close();
+        }
+
+        return resultMessage;
+    }
+
+    public String selectOne(String userId) throws SQLException {
         Connection con = null;
         ArrayList<User> userlist;
         String resultMessage;
-
-        System.out.println("----------------------------------");
-        System.out.println("            사용자 조회             ");
-        System.out.println("----------------------------------");
-        System.out.println("검색할 사용자의 계정 입력");
-        System.out.print("ID: ");
-        String userId = sc.nextLine();
 
         // SQL 실행
         checkDriver();
         try {
             con = DriverManager.getConnection(url + "/" + schema, userName, password);
             userlist = dao.selectOne(con, userId);
+
         } finally {
             if(con!=null) con.close();
         }
@@ -67,13 +78,14 @@ public class UserService {
         resultMessage += "\n - 이름: " + myUser.getName();
         resultMessage += "\n - ID: " + myUser.getuserId();
         resultMessage += "\n - PW: ";
-        
+
         return resultMessage;
     }
 
     public String insert() throws SQLException {
         Connection con = null;
         User user = new User();
+        String resultMessage;
 
         System.out.println("----------------------------------");
         System.out.println("         신규 가입 정보 입력");
@@ -90,17 +102,14 @@ public class UserService {
         try {
             con = DriverManager.getConnection(url + "/" + schema, userName, password);
             ArrayList<User> userCheck = dao.selectOne(con, user.getuserId());
-            String resultMessage;
-
             if (!userCheck.isEmpty()){
                 resultMessage = "[Error] 이미 가입된 회원입니다.";
                 return resultMessage;
             }
-
             resultMessage = dao.insert(con, user);
-            return resultMessage;
         } finally {
             if(con!=null) con.close();
         }
+        return resultMessage;
     }
 }
