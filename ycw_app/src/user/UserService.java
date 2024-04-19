@@ -39,9 +39,11 @@ public class UserService {
         return list;
     }
 
-    public ArrayList<User> selectOne() throws SQLException {
+    public String selectOne() throws SQLException {
         Connection con = null;
-        ArrayList<User> list;
+        ArrayList<User> userlist;
+        String resultMessage;
+
         System.out.println("----------------------------------");
         System.out.println("            사용자 조회             ");
         System.out.println("----------------------------------");
@@ -49,20 +51,24 @@ public class UserService {
         System.out.print("ID: ");
         String userId = sc.nextLine();
 
+        // SQL 실행
         checkDriver();
         try {
-            Class.forName(driver);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        try {
             con = DriverManager.getConnection(url + "/" + schema, userName, password);
-            list = dao.selectOne(con, userId);
+            userlist = dao.selectOne(con, userId);
         } finally {
             if(con!=null) con.close();
         }
-        return list;
+
+        User myUser = userlist.getFirst();
+        resultMessage = "----------------------------------";
+        resultMessage += "\n           내 개인정보";
+        resultMessage += "\n----------------------------------";
+        resultMessage += "\n - 이름: " + myUser.getName();
+        resultMessage += "\n - ID: " + myUser.getuserId();
+        resultMessage += "\n - PW: ";
+        
+        return resultMessage;
     }
 
     public String insert() throws SQLException {

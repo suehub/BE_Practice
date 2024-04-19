@@ -2,23 +2,27 @@ package trade;
 
 public class Trade {
     private int tradeId;
+    private String userId;
     private String requestAccount;
     private String action;
     private String targetAccount;
     private int amount;
-    private int balance;
+    private int reqBalance;
+    private int tarBalance;
 
     public Trade() {
         super();
     }
 
-    public Trade(int tradeId, String requestAccount, String action, String targetAccount, int amount, int balance) {
+    public Trade(int tradeId, String userId, String requestAccount, String action, String targetAccount, int amount, int reqBalance, int tarBalance) {
         this.tradeId = tradeId;
+        this.userId = userId;
         this.requestAccount = requestAccount;
         this.action = action;
         this.targetAccount = targetAccount;
         this.amount = amount;
-        this.balance = balance;
+        this.reqBalance = reqBalance;
+        this.tarBalance = tarBalance;
     }
 
     public int getTradeId() {
@@ -27,6 +31,14 @@ public class Trade {
 
     public void setTradeId(int tradeId) {
         this.tradeId = tradeId;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getRequestAccount() {
@@ -61,23 +73,19 @@ public class Trade {
         this.amount = amount;
     }
 
-    public int getBalance() {
-        return balance;
+    public int getReqBalance() {
+        return reqBalance;
     }
 
-    public void setBalance(int balance) {
-        this.balance = balance;
+    public void setReqBalance(int reqBalance) {
+        this.reqBalance = reqBalance;
     }
 
-    @Override
-    public String toString() {
-        return "Trade{" +
-                "tradeId=" + tradeId +
-                ", requestAccount='" + requestAccount + '\'' +
-                ", action='" + action + '\'' +
-                ", targetAccount='" + targetAccount + '\'' +
-                ", amount=" + amount +
-                ", balance=" + balance +
-                '}';
+    public int getTarBalance() {
+        return tarBalance;
+    }
+
+    public void setTarBalance(int tarBalance) {
+        this.tarBalance = tarBalance;
     }
 }

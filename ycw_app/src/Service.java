@@ -24,129 +24,110 @@ public class Service {
 
     void userService (int selectNum){
         UserService service = new UserService();
+        String resultMessage = "";
 
         switch (selectNum){
             case 1 -> {
-                String result;
                 try {
-                    result = service.insert();
-                    System.out.println(result);
-                    System.out.print("[Info] 아무 키나 입력하여 계속");
-                    String a = sc.next();
+                    resultMessage = service.insert();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
             }
             case 2 -> {
-                ArrayList<User> list = new ArrayList<>();
-
                 try {
-                    list = service.selectOne();
+                    resultMessage = service.selectOne();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
-                for(User user: list) {
-                    System.out.println("----------------------------------");
-                    System.out.println("          사용자 조회 결과");
-                    System.out.println("----------------------------------");
-                    System.out.println(user.toString());
-                    System.out.println("----------------------------------");
-                    System.out.print("[Info] 아무 키나 입력하여 계속");
-                    String a = sc.next();
-                }
+                outputMessage(resultMessage);
             }
         }
     }
 
     void accountService(int selectNum) {
         AccountService service = new AccountService();
+        ArrayList<Account> accountList;
+        String resultMessage = "";
+        int workNum = 0;
 
         switch (selectNum) {
-            case 3 -> {
-                String result;
+            case 3 -> { // 계좌 개설
                 try {
-                    result = service.insert();
-                    System.out.println(result);
+                    resultMessage = service.insert();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
             }
-            case 4 -> {
-                String result;
-                ArrayList<Account> list = new ArrayList<>();
-
-                System.out.println("----------------------------------");
-                System.out.println("             조회 메뉴              ");
-                System.out.println("----------------------------------");
-                System.out.println("1. 계좌번호로 조회");
-                System.out.println("2. 내 계좌 전체 조회");
-                int inputNum;
-                do {
-                    inputNum = sc.nextInt();
-                    if (inputNum != 1 && inputNum != 2) {
-                        System.out.println("잘못된 입력입니다.");
-                    }
-                } while (inputNum != 1 && inputNum != 2);
+            case 4 -> { //
 
                 try {
-                    if (inputNum == 1) {
-                        list = service.selectOne();
-                    } else if (inputNum == 2) {
-                        list = service.selectAll();
-                    }
+                    resultMessage = service.selectMyAllAccount();
+                    System.out.println(resultMessage);
+
+
+
+                    accountList = service.selectMyAccount();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
-
-                if (list.isEmpty()) {
-                    System.out.println("존재하지 않는 계좌입니다.");
-                } else if (!list.isEmpty()) {
-                    for (Account account : list) {
-                        System.out.println("----------------------------------");
-                        System.out.println("          계좌 조회 결과");
-                        System.out.println("----------------------------------");
-                        System.out.println(account.toString());
-                        System.out.println();
-                    }
-                }
-                System.out.print("[Info] 아무 키나 입력하여 계속");
-                String a = sc.next();
-
             }
             case 5 -> {
-                String result;
                 try {
-                    result = service.delete();
-                    System.out.println(result);
-                    System.out.println("----------------------------------");
-                    System.out.println("[Info] 아무 키나 입력하여 계속");
-                    String a = sc.next();
+                    resultMessage = service.delete();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
             }
-
+            default -> throw new IllegalStateException("Unexpected value: " + selectNum);
         }
-
+        outputMessage(resultMessage);
     }
 
     void tradeService(int selectNum) {
         TradeService service = new TradeService();
+        String resultMessage = "";
 
         switch (selectNum) {
             case 6, 7 -> {
-                String result;
                 try {
-                    result = service.insert(selectNum);
-                    System.out.println(result);
+                    resultMessage = service.insert(selectNum);
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
             }
             case 8 -> {
-
+                try {
+                    resultMessage = service.transfer(selectNum);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
         }
+
+    }
+    
+    int selectWork() {
+        System.out.println("----------------------------------");
+        System.out.println("             조회 메뉴              ");
+        System.out.println("----------------------------------");
+        System.out.println("1. 계좌번호로 조회");
+        System.out.println("2. 내 계좌 전체 조회");
+        int workNum;
+        do {
+            workNum = sc.nextInt();
+            if (workNum != 1 && workNum != 2) {
+                System.out.println("잘못된 입력입니다.");
+            }
+        } while (workNum != 1 && workNum != 2);
+
+        return workNum;
     }
 
+    void outputMessage (String resultMessage) {
+        System.out.println(resultMessage);
+        System.out.println("----------------------------------");
+        System.out.println("[Info] 아무 키나 입력하여 계속");
+        String a = sc.next();
+    }
 }

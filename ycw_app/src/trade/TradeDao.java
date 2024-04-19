@@ -10,21 +10,24 @@ public class TradeDao {
         PreparedStatement pstmt = null;
 
         try {
-            String sql = "insert into Trades values(?,?,?,?,?,?,?)";
+            String sql = "insert into Trades values(?,?,?,?,?,?,?,?)";
             pstmt = con.prepareStatement(sql);
             pstmt.setInt(1, trade.getTradeId());
-            pstmt.setString(2, trade.getRequestAccount());
-            pstmt.setString(3, trade.getTargetAccount());
+            pstmt.setString(2, trade.getUserId());
+            pstmt.setString(3, trade.getRequestAccount());
             pstmt.setString(4, trade.getAction());
-            pstmt.setInt(5, trade.getAmount());
-            pstmt.setInt(6, trade.getBalance());
+            pstmt.setString(5, trade.getTargetAccount());
+            pstmt.setInt(6, trade.getAmount());
+            pstmt.setInt(7, trade.getReqBalance());
+            pstmt.setInt(8, trade.getTarBalance());
             result = pstmt.execute(); // 성공시 false, 실패시 true
-            if (result) {
-                resultMessage = "거래에 실패하였습니다.";
+            if (!result) {
+                resultMessage = "[info] " + trade.getAction() + "을 진행합니다.";
+            } else {
+                resultMessage = "[Error] 거래에 실패하였습니다.";
             }
         } finally {
-            con.close();
-            if(pstmt!=null)pstmt.close();
+            if(pstmt!=null) pstmt.close();
         }
 
         return resultMessage;

@@ -8,7 +8,7 @@ public class UserDao {
     public ArrayList<User> selectAll(Connection con) throws SQLException {
         PreparedStatement pstmt = null;
         ResultSet rs = null;
-        ArrayList<User> list = new ArrayList<>();
+        ArrayList<User> userlist = new ArrayList<>();
         try {
             String sql = "select user_id, name from Users";
             pstmt = con.prepareStatement(sql);
@@ -16,19 +16,19 @@ public class UserDao {
             while (rs.next()) {
                 String userId = rs.getString(1);
                 String name = rs.getString(2);
-                list.add(new User(userId, name));
+                userlist.add(new User(userId, name));
             }
         } finally {
             if(rs!=null) rs.close();
             if(pstmt!=null) pstmt.close();
         }
-        return list;
+        return userlist;
     }
 
     public ArrayList<User> selectOne(Connection con, String userId) throws SQLException {
         PreparedStatement pstmt = null;
         ResultSet rs = null;
-        ArrayList<User> list = new ArrayList<>();
+        ArrayList<User> userlist = new ArrayList<>();
         try {
             String sql = "select user_id, name from Users where user_id = ?;";
             pstmt = con.prepareStatement(sql);
@@ -37,13 +37,13 @@ public class UserDao {
             while (rs.next()) {
                 userId = rs.getString(1);
                 String name = rs.getString(2);
-                list.add(new User(userId, name));
+                userlist.add(new User(userId, name));
             }
         } finally {
             if(rs!=null) rs.close();
             if(pstmt!=null) pstmt.close();
         }
-        return list;
+        return userlist;
     }
 
     public String insert(Connection con, User user) throws SQLException {

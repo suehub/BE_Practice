@@ -31,5 +31,4 @@ public class BankingApp {
             service.serviceMenu(selectNum);
         } while (true);
     }
-
 }

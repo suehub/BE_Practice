@@ -58,7 +58,7 @@ public class AccountDao {
 
     public String insert(Connection con, Account account) throws SQLException {
         PreparedStatement pstmt = null;
-        boolean result = false;
+        boolean result;
         String resultMessage = "";
         try {
             String sql = "insert into Accounts values(?,?,?,?)";
@@ -101,7 +101,7 @@ public class AccountDao {
         return resultMessage;
     }
 
-    public String depositUpdate(Connection con, Trade trade) throws SQLException {
+    public String updateOne(Connection con, Trade trade, Boolean reqUpdate) throws SQLException {
         PreparedStatement pstmt = null;
         boolean result;
         String resultMessage;
@@ -109,18 +109,23 @@ public class AccountDao {
         try {
             String sql = "update Accounts set balance = ? where account_number = ?;";
             pstmt = con.prepareStatement(sql);
-            pstmt.setInt(1, trade.getBalance());
-            pstmt.setInt(2,trade.getBalance());
+            if (reqUpdate) {
+                pstmt.setString(2, trade.getRequestAccount());
+                pstmt.setInt(1, trade.getReqBalance());
+            } else if (!reqUpdate){
+                pstmt.setString(2,trade.getTargetAccount());
+                pstmt.setInt(1, trade.getTarBalance());
+            }
             result = pstmt.execute();
             if (!result) {
-                resultMessage = trade.getTargetAccount() + "에 " +
-                                trade.getAmount() + "원" +
-                                trade.getAction() +"되었습니다.";
+                resultMessage = "[info] " + trade.getTargetAccount() + " 계좌 " +
+                                trade.getAmount() + "원 " +
+                                trade.getAction() + " 되었습니다.";
             } else {
-                resultMessage = trade.getAction() + "에 실패하였습니다.";
+                resultMessage = "[Error]" + trade.getAction() + "에 실패하였습니다.";
             }
         } finally {
-            con.close();
+            if (!reqUpdate) con.close();
             if(pstmt!=null) pstmt.close();
         }
 
