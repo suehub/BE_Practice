@@ -28,30 +28,29 @@ public class AccountService {
     public Status insert(Status status) throws SQLException {
         Connection con = null;
         Account account = new Account();
-
-        System.out.println("----------------------------------");
-        System.out.println("           신규 계좌 개설");
-        System.out.println("----------------------------------");
+        ArrayList<Account> accountList;
         String accountNum = "";
-        System.out.print("- 계좌 소유자 계정: "); // 로그인 구현 후엔 userId에 자기 계정 자동 할당
-        account.setUserId(sc.next());
-        account.setProductType("예금");
-        System.out.println(account.getUserId());
 
         con = driverConnector.connectDriver();
         try {
-            ArrayList<Account> accountCheck = new ArrayList<>();
-
             // 계좌번호 난수 생성하고 중복체크, 중복시 루프
             do {
                 for (int i = 0; i < 10; i++) {
                     accountNum += (int) ((Math.random() * (10 - 0)) + 0);
                 }
-                accountCheck = dao.selectOne(con, accountNum);
-            } while (!accountCheck.isEmpty());
+                accountList = dao.selectOne(con, accountNum);
+            } while (!accountList.isEmpty());
 
+            // 생성할 계좌 정보 설정
+            account.setUserId(status.getUserId());
             account.setaccountNum(accountNum);
+            account.setProductType(status.getData());
+
+            // 신규 계좌 insert
             status.setMessage(dao.insert(con, account));
+            status.setWorkName("manage_accounts");
+            status.setWorkFlow("continue");
+            status.setData("");
 
             return status;
         } finally {
@@ -62,7 +61,6 @@ public class AccountService {
     public ArrayList<Account> selectMyAllAccount(Status status) throws SQLException {
         Connection con = null;
         ArrayList<Account> accountList;
-        ArrayList<User> userList = new ArrayList<>();
 
         con = driverConnector.connectDriver();
         try {
@@ -75,42 +73,37 @@ public class AccountService {
     }
 
 
-    public ArrayList<Account> selectMyAccount() throws SQLException {
-        Connection con = null;
-        ArrayList<Account> accountList;
-
-        System.out.println("----------------------------------");
-        System.out.println("           거래내역 조회");
-        System.out.println("----------------------------------");
-        System.out.println("[input] 계좌번호: ");
-        String accountNum = sc.next();
-
-        con = driverConnector.connectDriver();
-        try {
-            accountList = dao.selectOne(con, accountNum);
-        } finally {
-            if(con!=null) con.close();
-        }
-        return accountList;
-    }
+//    public ArrayList<Account> selectMyAccount(Status) throws SQLException {
+//        Connection con = null;
+//        ArrayList<Account> accountList;
+//
+//        con = driverConnector.connectDriver();
+//        try {
+//            accountList = dao.selectOne(con, );
+//        } finally {
+//            if(con!=null) con.close();
+//        }
+//        return accountList;
+//    }
 
 
     public Status delete(Status status) throws SQLException {
         Connection con = null;
 
-        System.out.println("해지할 계좌번호 입력");
-        String accountNum = sc.next();
-
         con = driverConnector.connectDriver();
         try {
-            ArrayList<Account> accountCheck = dao.selectOne(con, accountNum);
-            String resultMessage = "";
+            // 입력받은 계좌번호 유효성 검증
+            ArrayList<Account> accountCheck = dao.selectOne(con, status.getData());
 
             if (accountCheck.isEmpty()) {
-                status.setMessage( "존재하지 않는 계좌입니다.");
+                status.setMessage("[Error] 존재하지 않는 계좌입니다.");
                 return status;
             }
-            status.setMessage(dao.delete(con, accountNum));
+            // 해지할 계좌 delete
+            status.setMessage(dao.delete(con, status.getData()));
+            status.setWorkName("manage_accounts");
+            status.setWorkFlow("continue");
+            status.setData("");
 
             return status;
         } finally {
@@ -118,21 +111,21 @@ public class AccountService {
         }
     }
 
-    public String updateOne(Trade trade) throws SQLException {
-        Connection con = null;
-        String resultMessage;
-
-        System.out.println(trade.getAction() + " 계좌 입력");
-        String accountNum = sc.nextLine();
-
-        con = driverConnector.connectDriver();
-        try {
-            resultMessage = dao.updateOne(con, trade,false);
-        } finally {
-            if(con!=null) con.close();
-        }
-
-        return resultMessage;
-    }
+//    public String updateOne(Trade trade) throws SQLException {
+//        Connection con = null;
+//        String resultMessage;
+//
+//        System.out.println(trade.getAction() + " 계좌 입력");
+//        String accountNum = sc.nextLine();
+//
+//        con = driverConnector.connectDriver();
+//        try {
+//            resultMessage = dao.updateOne(con, trade,false);
+//        } finally {
+//            if(con!=null) con.close();
+//        }
+//
+//        return resultMessage;
+//    }
 
 }

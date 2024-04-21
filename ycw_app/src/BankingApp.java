@@ -1,4 +1,4 @@
-import page.PagePrinter;
+import page.Pages;
 import page.Status;
 
 public class BankingApp {
@@ -9,7 +9,7 @@ public class BankingApp {
 
         do {
             if (status.getWorkName() == "main" && !status.getUserId().contains("guest")) {
-                status = PagePrinter.mainPage(status);
+                status = Pages.mainPage(status);
             }
             service.serviceMenu(status);
         } while (status.getWorkFlow() != "stop");

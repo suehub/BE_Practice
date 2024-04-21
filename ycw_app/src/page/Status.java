@@ -59,4 +59,15 @@ public class Status {
     public void setMessage(String message) {
         this.message = message;
     }
+
+    @Override
+    public String toString() {
+        return "Status{" +
+                "workFlow='" + workFlow + '\'' +
+                ", userId='" + userId + '\'' +
+                ", workName='" + workName + '\'' +
+                ", data='" + data + '\'' +
+                ", message='" + message + '\'' +
+                '}';
+    }
 }

@@ -2,9 +2,8 @@ package trade;
 
 public class Trade {
     private int tradeId;
-    private String userId;
-    private String requestAccount;
     private String action;
+    private String requestAccount;
     private String targetAccount;
     private int amount;
     private int reqBalance;
@@ -14,15 +13,22 @@ public class Trade {
         super();
     }
 
-    public Trade(int tradeId, String userId, String requestAccount, String action, String targetAccount, int amount, int reqBalance, int tarBalance) {
+    public Trade(int tradeId, String action, String requestAccount, String targetAccount, int amount, int reqBalance, int tarBalance) {
         this.tradeId = tradeId;
-        this.userId = userId;
-        this.requestAccount = requestAccount;
         this.action = action;
+        this.requestAccount = requestAccount;
         this.targetAccount = targetAccount;
         this.amount = amount;
         this.reqBalance = reqBalance;
         this.tarBalance = tarBalance;
+    }
+
+    public Trade(int tradeId, String action, String requestAccount, String targetAccount, int amount) {
+        this.tradeId = tradeId;
+        this.action = action;
+        this.requestAccount = requestAccount;
+        this.targetAccount = targetAccount;
+        this.amount = amount;
     }
 
     public int getTradeId() {
@@ -31,14 +37,6 @@ public class Trade {
 
     public void setTradeId(int tradeId) {
         this.tradeId = tradeId;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
     }
 
     public String getRequestAccount() {
@@ -87,5 +85,18 @@ public class Trade {
 
     public void setTarBalance(int tarBalance) {
         this.tarBalance = tarBalance;
+    }
+
+    @Override
+    public String toString() {
+        return "Trade{" +
+                "tradeId=" + tradeId +
+                ", requestAccount='" + requestAccount + '\'' +
+                ", action='" + action + '\'' +
+                ", targetAccount='" + targetAccount + '\'' +
+                ", amount=" + amount +
+                ", reqBalance=" + reqBalance +
+                ", tarBalance=" + tarBalance +
+                '}';
     }
 }
