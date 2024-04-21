@@ -3,6 +3,7 @@ package trade;
 import account.Account;
 import account.AccountDao;
 import page.PagePrinter;
+import page.Status;
 import repository.DriverConnector;
 
 import java.sql.Connection;
@@ -17,12 +18,8 @@ public class TradeService {
     AccountDao accountDao = new AccountDao();
     TradeDao dao = new TradeDao();
 
-    public String insert(int selectNum) throws SQLException {
+    public String insert(Trade trade) throws SQLException {
         Connection con = null;
-        Trade trade = new Trade();
-
-        // 거래정보 입력 루프
-        trade = PagePrinter.inputTradeInfo(selectNum);
 
         // SQL 실행
         String resultMessage;
@@ -37,80 +34,69 @@ public class TradeService {
         }
     }
 
-    public String transfer(int selectNum) throws SQLException {
+    public Status transfer(Status status, Trade trade) throws SQLException {
         Connection con = null;
-        Trade trade = new Trade();
-        boolean infoError = true;
+        String resultMessage;
         ArrayList<Account> requestList = new ArrayList<>();
         ArrayList<Account> targetList = new ArrayList<>();
-        int newTarBalance;
-        int newReqBalance;
 
-        // 거래정보 입력 루프
-
-        do {
-            // 사용자 입력 가져옴
-            trade = PagePrinter.inputTradeInfo(selectNum);
-            // 계좌 잔액조회
-            con = driverConnector.connectDriver();
-            try {
-                if (trade.getAction() == "송금") {
-                    requestList = accountDao.selectOne(con, trade.getRequestAccount());
-                }
-                targetList = accountDao.selectOne(con, trade.getTargetAccount());
-            } catch (SQLException e) {}
-
-            // 계좌번호 검증
-            if (targetList.isEmpty()) {
-                System.out.println("[Error] 올바른 계좌번호를 입력하세요.");
-                continue;
-            } else if (trade.getAction() == "송금" && targetList.isEmpty()) {
-                System.out.println("[Error] 올바른 출금 계좌번호를 입력하세요.");
-                continue;
-            } else if (trade.getAction() == "송금" && requestList.isEmpty()) {
-                System.out.println("[Error] 올바른 송금 계좌번호를 입력하세요.");
-                continue;
-            }
-
-            // 거래 후 잔고 설정 및 유효성 검증
-            if (trade.getAction() == "입금") {
-                newTarBalance = targetList.getFirst().getBalance() + trade.getAmount();
-                trade.setTarBalance(newTarBalance);
-            } else if (trade.getAction() == "출금"){
-                newTarBalance = targetList.getFirst().getBalance() - trade.getAmount();
-                if (newTarBalance < 0) {
-                    System.out.println("출금액이 보유잔고를 초과합니다.");
-                    continue;
-                }
-                trade.setTarBalance(newTarBalance);
-            } else if (trade.getAction() == "송금"){
-                newReqBalance = requestList.getFirst().getBalance() - trade.getAmount();
-                newTarBalance = targetList.getFirst().getBalance() + trade.getAmount();
-
-                if (newReqBalance < 0) {
-                    System.out.println("송금액이 보유잔고를 초과합니다.");
-                    continue;
-                }
-                trade.setTarBalance(newTarBalance);
-            }
-
-            infoError = false;
-        } while (infoError == true);
-
-        // SQL 실행
-        String resultMessage;
+        // 계좌 조회
         con = driverConnector.connectDriver();
         try {
-            resultMessage = dao.insert(con, trade);
-            System.out.println(resultMessage);
+            if (trade.getAction() == "송금") {
+                requestList = accountDao.selectOne(con, trade.getRequestAccount());
+            }
+            targetList = accountDao.selectOne(con, trade.getTargetAccount());
+        } catch (SQLException e) {}
+
+        if (targetList.isEmpty() && (trade.getAction() == "입금" || trade.getAction() == "출금" )) {
+            status.setMessage("[Error] 올바른 계좌번호를 입력하세요.");
+            return status;
+        } else if (trade.getAction() == "송금" && targetList.isEmpty()) {
+            status.setMessage("[Error] 올바른 보낼 계좌번호를 입력하세요.");
+            return status;
+        } else if (trade.getAction() == "송금" && requestList.isEmpty()) {
+            status.setMessage("[Error] 올바른 받는 계좌번호를 입력하세요.");
+            return status;
+        }
+
+        // 거래 후 잔고 설정 및 유효성 검증
+        int newTarBalance, newReqBalance;
+
+        if (trade.getAction() == "입금") {
+            newTarBalance = targetList.getFirst().getBalance() + trade.getAmount();
+            trade.setTarBalance(newTarBalance);
+        } else if (trade.getAction() == "출금"){
+            newTarBalance = targetList.getFirst().getBalance() - trade.getAmount();
+            if (newTarBalance < 0) {
+                status.setMessage("[Error] 출금액이 보유잔고를 초과합니다.");
+                return status;
+            }
+            trade.setTarBalance(newTarBalance);
+        } else if (trade.getAction() == "송금"){
+            newReqBalance = requestList.getFirst().getBalance() - trade.getAmount();
+            newTarBalance = targetList.getFirst().getBalance() + trade.getAmount();
+
+            if (newReqBalance < 0) {
+                status.setMessage("[Error] 송금액이 보유잔고를 초과합니다.");
+                return status;
+            }
+            trade.setTarBalance(newTarBalance);
+        }
+
+        // 송금결과 각 account에 update
+        con = driverConnector.connectDriver();
+        try {
+            status.setMessage(dao.insert(con, trade));
             // 요청자 계좌 업데이트
             resultMessage = accountDao.updateOne(con,trade,true);
             // 수령자 계좌 업데이트
             resultMessage = accountDao.updateOne(con,trade,false);
-            return resultMessage;
+
         } finally {
             if(con!=null) con.close();
         }
+        return status;
     }
 
     public String selectAccountHistory() throws SQLException {
@@ -118,7 +104,6 @@ public class TradeService {
         Trade trade = new Trade();
 
         String user_id = sc.next();
-
 
         String resultMessage = "";
 

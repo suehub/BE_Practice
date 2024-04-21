@@ -13,7 +13,7 @@ public class DriverConnector {
 
     public DriverConnector() {
         this.driver = "com.mysql.cj.jdbc.Driver";
-        this.url = "jdbc:mysql://practice-mysql.cvdyoyfefnzk.ap-northeast-2.rds.amazonaws.com";
+        this.url = "practice-mysql.cvdyoyfefnzk.ap-northeast-2.rds.amazonaws.com";
         this.database = "practice_db";
         this.userName = "admin";
         this.password = "Ucheol92!4";
@@ -63,7 +63,7 @@ public class DriverConnector {
         Connection con = null;
         try {
             Class.forName(driver);
-            con = DriverManager.getConnection(url + "/" + database, userName, password);
+            con = DriverManager.getConnection("jdbc:mysql://" + url + "/" + database, userName, password);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }

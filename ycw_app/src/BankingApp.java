@@ -5,14 +5,14 @@ public class BankingApp {
 
     public static void main(String[] args) {
         Service service = new Service();
-        Status status = new Status(true);
+        Status status = new Status("run");
 
         do {
-            if (status.getUserId() != "guest") {
-                PagePrinter.mainPage();
+            if (status.getWorkName() == "main" && !status.getUserId().contains("guest")) {
+                status = PagePrinter.mainPage(status);
             }
             service.serviceMenu(status);
-        } while (true);
+        } while (status.getWorkFlow() != "stop");
 
     }
 }

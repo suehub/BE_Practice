@@ -1,26 +1,31 @@
 package page;
 
 public class Status {
-    private boolean working;
+    private String workFlow;
     private String userId;
-    private int workNum;
+    private String workName;
+    private String data;
+    private String message;
+
 
     public Status() {
         super();
     }
 
-    public Status(boolean working) {
-        this.working = working;
-        this.userId = "guest";
-        this.workNum = 0;
+    public Status(String workflow) {
+        this.workFlow = workflow;
+        this.userId = "non_signed_guest";
+        this.workName = "log_in";
+        this.data = "";
+        this.message = "";
     }
 
-    public boolean isWorking() {
-        return working;
+    public String getWorkFlow() {
+        return workFlow;
     }
 
-    public void setWorking(boolean working) {
-        this.working = working;
+    public void setWorkFlow(String workFlow) {
+        this.workFlow = workFlow;
     }
 
     public String getUserId() {
@@ -31,11 +36,27 @@ public class Status {
         this.userId = userId;
     }
 
-    public int getWorkNum() {
-        return workNum;
+    public String getWorkName() {
+        return workName;
     }
 
-    public void setWorkNum(int workNum) {
-        this.workNum = workNum;
+    public void setWorkName(String workName) {
+        this.workName = workName;
+    }
+
+    public String getData() {
+        return data;
+    }
+
+    public void setData(String data) {
+        this.data = data;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 }

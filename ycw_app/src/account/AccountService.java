@@ -2,15 +2,18 @@ package account;
 
 import account.Account;
 import account.AccountDao;
+import page.Status;
 import trade.Trade;
 import user.User;
 import user.UserDao;
 import repository.DriverConnector;
 
+import javax.lang.model.type.ArrayType;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.lang.Math;
@@ -22,7 +25,7 @@ public class AccountService {
     UserDao userDao = new UserDao();
 
 
-    public String insert() throws SQLException {
+    public Status insert(Status status) throws SQLException {
         Connection con = null;
         Account account = new Account();
 
@@ -48,47 +51,29 @@ public class AccountService {
             } while (!accountCheck.isEmpty());
 
             account.setaccountNum(accountNum);
-            String resultMessage = "";
-            resultMessage = dao.insert(con, account);
+            status.setMessage(dao.insert(con, account));
 
-            return resultMessage;
+            return status;
         } finally {
             if(con!=null) con.close();
         }
     }
 
-    public String selectMyAllAccount() throws SQLException {
+    public ArrayList<Account> selectMyAllAccount(Status status) throws SQLException {
         Connection con = null;
-        ArrayList<Account> accountlist;
+        ArrayList<Account> accountList;
         ArrayList<User> userList = new ArrayList<>();
-        String resultMessage;
-        String userId = ""; // 수정필요!!
 
         con = driverConnector.connectDriver();
         try {
-            accountlist = dao.selectAll(con, userId);
+            accountList = dao.selectAll(con, status.getUserId());
         } finally {
             if(con!=null) con.close();
         }
-        // 결과 메시지 생성
-        resultMessage = "----------------------------------\n";
-        resultMessage += ("\n      " + userId + "님의 계좌 내역\n");
-        resultMessage += "\n----------------------------------";
-        resultMessage += "\nno | 상품 |   계좌번호   | 잔액     ";
-        resultMessage += "\n----------------------------------";
 
-        Account myAccount = new Account();
-        for (int i = 0; i < accountlist.size(); i++) {
-            myAccount = accountlist.get(i);
-            resultMessage += ("\n " + (i+1)
-                             + " | " + myAccount.getProductType()
-                             + " | " + myAccount.getaccountNum()
-                             + " | " + myAccount.getBalance());
-        }
-
-
-        return resultMessage;
+        return accountList;
     }
+
 
     public ArrayList<Account> selectMyAccount() throws SQLException {
         Connection con = null;
@@ -109,7 +94,8 @@ public class AccountService {
         return accountList;
     }
 
-    public String delete() throws SQLException {
+
+    public Status delete(Status status) throws SQLException {
         Connection con = null;
 
         System.out.println("해지할 계좌번호 입력");
@@ -121,19 +107,18 @@ public class AccountService {
             String resultMessage = "";
 
             if (accountCheck.isEmpty()) {
-                resultMessage = "존재하지 않는 계좌입니다.";
-                return resultMessage;
+                status.setMessage( "존재하지 않는 계좌입니다.");
+                return status;
             }
+            status.setMessage(dao.delete(con, accountNum));
 
-            resultMessage = dao.delete(con, accountNum);
-
-            return resultMessage;
+            return status;
         } finally {
             if(con!=null) con.close();
         }
     }
 
-    public String UpdateOne(Trade trade) throws SQLException {
+    public String updateOne(Trade trade) throws SQLException {
         Connection con = null;
         String resultMessage;
 
