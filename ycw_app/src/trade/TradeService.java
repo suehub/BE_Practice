@@ -2,7 +2,7 @@ package trade;
 
 import account.Account;
 import account.AccountDao;
-import page.Status;
+import client.Status;
 import repository.DriverConnector;
 
 import java.sql.Connection;
@@ -35,13 +35,13 @@ public class TradeService {
         }
 
         int newTarBalance = 0;
-        if (trade.getAction() == "입금") {
+        if (trade.getAction().equals("입금")) {
             newTarBalance = targetList.getFirst().getBalance() + trade.getAmount();
-        } else if (trade.getAction() == "출금"){
+        } else if (trade.getAction().equals("출금")){
             newTarBalance = targetList.getFirst().getBalance() - trade.getAmount();
         }
 
-        if (trade.getAction() == "출금" && newTarBalance < 0) {
+        if (trade.getAction().equals("출금") && newTarBalance < 0) {
             status.setMessage("[Error] 출금액이 보유잔고를 초과합니다.");
             return status;
         }

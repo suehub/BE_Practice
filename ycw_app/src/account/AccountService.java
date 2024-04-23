@@ -1,20 +1,12 @@
 package account;
 
-import account.Account;
-import account.AccountDao;
-import page.Status;
-import trade.Trade;
-import user.User;
+import client.Status;
 import user.UserDao;
 import repository.DriverConnector;
 
-import javax.lang.model.type.ArrayType;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Scanner;
 import java.lang.Math;
 

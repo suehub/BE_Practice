@@ -12,7 +12,8 @@ public class AccountDao {
         ResultSet rs = null;
         ArrayList<Account> list = new ArrayList<>();
         try {
-            String sql = "select account_number, Users_user_id, product_type, balance from Accounts where Users_user_id = ?;";
+            String sql = "select account_number, Users_user_id, product_type, balance " +
+                         "from Accounts where Users_user_id = ?;";
             pstmt = con.prepareStatement(sql);
             pstmt.setString(1, userId);
             rs = pstmt.executeQuery();
@@ -37,8 +38,8 @@ public class AccountDao {
 
         try {
             String sql = "select account_number, Users_user_id,product_type, balance  \n" +
-                        "from practice_db.Accounts \n" +
-                        "where account_number = ?;";
+                         "from practice_db.Accounts \n" +
+                         "where account_number = ?;";
             pstmt = con.prepareStatement(sql);
             pstmt.setString(1, accountNum);
             rs = pstmt.executeQuery();

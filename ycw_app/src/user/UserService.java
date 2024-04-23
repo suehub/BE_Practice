@@ -3,12 +3,9 @@ package user;
 import java.sql.*;
 import java.util.ArrayList;
 
-import page.Status;
+import client.Status;
 import repository.DriverConnector;
-import user.User;
-import user.UserDao;
 
-import java.util.List;
 import java.util.Scanner;
 
 public class UserService {

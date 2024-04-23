@@ -1,4 +1,4 @@
-package page;
+package client;
 
 public class Status {
     private String workFlow;

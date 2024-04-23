@@ -39,7 +39,9 @@ public class TradeDao {
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         try {
-            String sql = "select trade_id, action, request_account, target_account, amount from Trades where request_account = ? or target_account = ? order by trade_id; ";
+            String sql = "select trade_id, action, request_account, target_account, amount from Trades " +
+                         "where request_account = ? or target_account = ? " +
+                         "order by trade_id; ";
             pstmt = con.prepareStatement(sql);
             pstmt.setString(1, accountNumber);
             pstmt.setString(2, accountNumber);
@@ -67,7 +69,8 @@ public class TradeDao {
         ResultSet rs = null;
         ArrayList<Account> list = new ArrayList<>();
         try {
-            String sql = "select account_number, Users_user_id, product_type, balance from Accounts where Users_user_id = ?;";
+            String sql = "select account_number, Users_user_id, product_type, balance " +
+                         "from Accounts where Users_user_id = ?;";
             pstmt = con.prepareStatement(sql);
             pstmt.setString(1, userId);
             rs = pstmt.executeQuery();

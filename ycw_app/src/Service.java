@@ -1,7 +1,7 @@
 import account.Account;
 import account.AccountService;
-import page.Pages;
-import page.Status;
+import client.Pages;
+import client.Status;
 import trade.Trade;
 import trade.TradeService;
 import user.User;
@@ -10,17 +10,13 @@ import user.UserService;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class Service {
 
-    Scanner sc = new Scanner(System.in);
-
     Status serviceMenu (Status status){
-        System.out.println(this.getClass() + " / " + status.toString());
 
         switch (status.getWorkName()) {
-            case "log_in", "sign_up", "my_page"-> userService(status);
+            case "log_in", "sign_up", "my_page" -> userService(status);
             case "manage_accounts", "open_account", "close_account" -> accountService(status);
             case "account_history", "deposit", "withdraw", "transfer" -> tradeService(status);
             default -> throw new IllegalStateException("[Error] 잘못된 입력 입니다.");
@@ -36,11 +32,11 @@ public class Service {
 
         switch (status.getWorkName()){
             case "log_in" -> {
-                if (status.getUserId() == "non_signed_guest"){
+                if (status.getUserId().equals("non_signed_guest")){
                     status = Pages.checkUserPage(status);
                 }
 
-                if (status.getUserId() == "signed_guest") {
+                if (status.getUserId().equals("signed_guest")) {
                     user = Pages.loginPage();
                     try {
                         status = service.logIn(status, user);

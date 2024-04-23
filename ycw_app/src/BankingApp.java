@@ -1,5 +1,5 @@
-import page.Pages;
-import page.Status;
+import client.Pages;
+import client.Status;
 
 public class BankingApp {
 
@@ -8,11 +8,11 @@ public class BankingApp {
         Status status = new Status("run");
 
         do {
-            if (status.getWorkName() == "main" && !status.getUserId().contains("guest")) {
+            if (status.getWorkName().equals("main")  && !status.getUserId().contains("guest")) {
                 status = Pages.mainPage(status);
             }
             service.serviceMenu(status);
-        } while (status.getWorkFlow() != "stop");
+        } while (!status.getWorkFlow().equals("stop"));
 
     }
 }

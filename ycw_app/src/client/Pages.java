@@ -1,4 +1,4 @@
-package page;
+package client;
 
 import account.Account;
 import trade.Trade;
@@ -426,7 +426,7 @@ public class Pages {
 
 
     public static void printMessage (Status status) {
-        if (status.getMessage() != "") {
+        if (!status.getMessage().equals("")) {
             System.out.println(status.getMessage());
             status.setMessage("");
         }
@@ -436,14 +436,14 @@ public class Pages {
     public static void underPage (Status status) {
         String page;
 
-        if (status.getWorkFlow() == "stop") {
+        if (status.getWorkFlow().equals("stop")) {
             page = "----------------------------------\n";
             page += "       뱅킹시스템 사용 종료\n";
             page += "----------------------------------\n";
             System.out.println(page);
         }
 
-        if (status.getWorkFlow() == "continue"){
+        if (status.getWorkFlow().equals("continue")){
             page = "[Info] 아무 키나 입력하여 계속: ";
             System.out.print(page);
             String a = sc.next();
