@@ -1,19 +1,21 @@
 package account;
 
+import com.mysql.cj.QueryInfo;
 import trade.Trade;
+import repository.Query;
 
 import java.sql.*;
 import java.util.ArrayList;
 
+
 public class AccountDao {
 
-    public ArrayList<Account> selectAll(Connection con, String userId) throws SQLException {
+    public ArrayList<Account> selectMultiple(Connection con, String userId) throws SQLException {
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         ArrayList<Account> list = new ArrayList<>();
         try {
-            String sql = "select account_number, Users_user_id, product_type, balance " +
-                         "from Accounts where Users_user_id = ?;";
+            String sql = Query.ACCOUNT_SELECT_MULTIPLE.getQueryString();
             pstmt = con.prepareStatement(sql);
             pstmt.setString(1, userId);
             rs = pstmt.executeQuery();
@@ -37,9 +39,7 @@ public class AccountDao {
         ArrayList<Account> list = new ArrayList<>();
 
         try {
-            String sql = "select account_number, Users_user_id,product_type, balance  \n" +
-                         "from practice_db.Accounts \n" +
-                         "where account_number = ?;";
+            String sql = Query.ACCOUNT_SELECT.getQueryString();
             pstmt = con.prepareStatement(sql);
             pstmt.setString(1, accountNum);
             rs = pstmt.executeQuery();
@@ -62,7 +62,7 @@ public class AccountDao {
         boolean result;
         String resultMessage = "";
         try {
-            String sql = "insert into Accounts values(?,?,?,?)";
+            String sql = Query.ACCOUNT_INSERT.getQueryString();
             pstmt = con.prepareStatement(sql);
             pstmt.setString(1, account.getaccountNum());
             pstmt.setString(2, account.getUserId());
@@ -86,7 +86,7 @@ public class AccountDao {
         boolean result = false;
         String resultMessage = "";
         try {
-            String sql = "delete from Accounts where account_number = ?;";
+            String sql = Query.ACCOUNT_DELETE.getQueryString();
             pstmt = con.prepareStatement(sql);
             pstmt.setString(1, accountNum);
             result = pstmt.execute(); // 성공시 false, 실패시 true
@@ -108,7 +108,7 @@ public class AccountDao {
         String resultMessage;
 
         try {
-            String sql = "update Accounts set balance = ? where account_number = ?;";
+            String sql = Query.ACCOUNT_UPDATE.getQueryString();
             pstmt = con.prepareStatement(sql);
             if (reqUpdate) {
                 pstmt.setString(2, trade.getRequestAccount());

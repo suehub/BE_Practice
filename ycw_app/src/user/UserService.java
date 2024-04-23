@@ -44,7 +44,7 @@ public class UserService {
         // SQL 실행
         con = driverConnector.connectDriver();
         try {
-            userList = dao.selectOne(con, user.getuserId(), user.getPassword());
+            userList = dao.selectLogIn(con, user.getuserId(), user.getPassword());
             if (!userList.isEmpty()){
                 status.setUserId(userList.getFirst().getuserId());
                 status.setMessage("[Info] " + userList.getFirst().getName() + "님 환영합니다.");

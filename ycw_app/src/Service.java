@@ -130,7 +130,6 @@ public class Service {
                 }
             }
             case "deposit", "withdraw" -> {
-                System.out.println(this.getClass() + " / " + status.toString());
                 AccountService accountService = new AccountService();
                 ArrayList<Account> accountList = new ArrayList<>();
 
@@ -160,7 +159,6 @@ public class Service {
                 }
             }
             case "transfer" -> {
-                System.out.println(this.getClass() + " / " + status.toString());
                 AccountService accountService = new AccountService();
                 ArrayList<Account> accountList = new ArrayList<>();
                 boolean inputError = true;

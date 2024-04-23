@@ -56,7 +56,7 @@ public class AccountService {
 
         con = driverConnector.connectDriver();
         try {
-            accountList = dao.selectAll(con, status.getUserId());
+            accountList = dao.selectMultiple(con, status.getUserId());
         } finally {
             if(con!=null) con.close();
         }

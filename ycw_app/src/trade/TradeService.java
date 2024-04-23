@@ -124,7 +124,7 @@ public class TradeService {
 
         con = driverConnector.connectDriver();
         try{
-            tradeList = dao.selectAccountHistory(con, status.getUserId(), status.getData()); // accountNumber 주입
+            tradeList = dao.selectMutiple(con, status.getUserId(), status.getData()); // accountNumber 주입
         } finally {
             if(con!=null) con.close();
         }

@@ -2,6 +2,7 @@ package user;
 
 import java.sql.*;
 import java.util.ArrayList;
+import repository.Query;
 
 public class UserDao {
 
@@ -25,12 +26,12 @@ public class UserDao {
         return userlist;
     }
 
-    public ArrayList<User> selectOne(Connection con, String userId, String password) throws SQLException {
+    public ArrayList<User> selectLogIn(Connection con, String userId, String password) throws SQLException {
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         ArrayList<User> userlist = new ArrayList<>();
         try {
-            String sql = "select user_id, name from Users where user_id = ? and password = ?";
+            String sql = Query.USER_LOG_IN.getQueryString();
             pstmt = con.prepareStatement(sql);
             pstmt.setString(1, userId);
             pstmt.setString(2, password);
@@ -53,7 +54,7 @@ public class UserDao {
         ResultSet rs = null;
         ArrayList<User> userlist = new ArrayList<>();
         try {
-            String sql = "select user_id, name from Users where user_id = ?;";
+            String sql = Query.USER_SELECT.getQueryString();
             pstmt = con.prepareStatement(sql);
             pstmt.setString(1, userId);
             rs = pstmt.executeQuery();
@@ -74,7 +75,7 @@ public class UserDao {
         boolean result;
         String resultMessage;
         try {
-            String sql = "insert into Users values(?,?,?)";
+            String sql = Query.USER_INSERT.getQueryString();
             pstmt = con.prepareStatement(sql);
             pstmt.setString(1, user.getuserId());
             pstmt.setString(2, user.getPassword());
