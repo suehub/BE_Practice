@@ -10,9 +10,7 @@ import java.util.Scanner;
 
 public class HistoryService {
 
-    public static void getTransactionHistory(Scanner scanner) throws SQLException {
-        System.out.print("계좌 번호를 입력하세요: ");
-        String accountId = scanner.nextLine();
+    public static void getTransactionHistory(String accountId) throws SQLException {
         PreparedStatement pstmt;
         String sql = "SELECT * FROM history WHERE Account_AccountId = ?";
         try (Connection conn = JdbcConnection.JdbcConnection()) {
