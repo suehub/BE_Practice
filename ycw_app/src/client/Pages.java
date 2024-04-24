@@ -315,7 +315,7 @@ public class Pages {
         work = "";
 
         if (status.getWorkName().equals(Tag.DEPOSIT)) {
-            work = ;
+            work = "입금";
         } else if (status.getWorkName().equals(Tag.WITHDRAW)) {
             work = "출금";
         } else if (status.getWorkName().equals(Tag.TRANSFER)) {
