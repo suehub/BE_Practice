@@ -6,6 +6,7 @@ import trade.Trade;
 import trade.TradeService;
 import user.User;
 import user.UserService;
+import controller.*;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -14,11 +15,12 @@ import java.util.ArrayList;
 public class Service {
 
     Status serviceMenu (Status status){
+        status.setWorkFlow(Flow.RUN);
 
         switch (status.getWorkName()) {
-            case "log_in", "sign_up", "my_page" -> userService(status);
-            case "manage_accounts", "open_account", "close_account" -> accountService(status);
-            case "account_history", "deposit", "withdraw", "transfer" -> tradeService(status);
+            case LOG_IN, SIGN_UP, MY_PAGE -> userService(status);
+            case MANAGE_ACCOUNTS, OPEN_ACCOUNT, CLOSE_ACCOUNT -> accountService(status);
+            case ACCOUNT_HISTORY, DEPOSIT, WITHDRAW, TRANSFER -> tradeService(status);
             default -> throw new IllegalStateException("[Error] 잘못된 입력 입니다.");
         }
         return status;
@@ -31,12 +33,12 @@ public class Service {
         boolean inputError = true;
 
         switch (status.getWorkName()){
-            case "log_in" -> {
-                if (status.getUserId().equals("non_signed_guest")){
+            case LOG_IN -> {
+            if (status.getUserId().equals(Flow.NEW_GUEST.getFlow())){
                     status = Pages.checkUserPage(status);
                 }
 
-                if (status.getUserId().equals("signed_guest")) {
+                if (status.getUserId().equals(Flow.OLD_GUEST.getFlow())) {
                     user = Pages.loginPage();
                     try {
                         status = service.logIn(status, user);
@@ -45,7 +47,7 @@ public class Service {
                     }
                 }
             }
-            case "sign_up" -> {
+            case SIGN_UP -> {
                 do {
                     try {
                         user = Pages.signUpPage();
@@ -53,14 +55,14 @@ public class Service {
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
-                    if (status.getMessage().contains("[Info]")) {
+                    if (status.getMessage().contains(Message.INFO.getMessage())) {
                         inputError = false;
-                    } else if (status.getMessage().contains("[Error]")) {
+                    } else if (status.getMessage().contains(Message.ERROR.getMessage())) {
                         Pages.printMessage(status);
                     }
                 } while (inputError);
             }
-            case "my_page" -> {
+            case MY_PAGE -> {
                 try {
                      user = service.selectOne(status.getUserId());
                      status = Pages.myInfoPage(status, user);
@@ -80,7 +82,7 @@ public class Service {
         AccountService service = new AccountService();
 
         switch (status.getWorkName()) {
-            case "manage_accounts" -> {
+            case MANAGE_ACCOUNTS -> {
                 ArrayList<Account> accountList;
                 try {
                      accountList = service.selectMyAllAccount(status);
@@ -89,7 +91,7 @@ public class Service {
                     e.printStackTrace();
                 }
             }
-            case "open_account" -> {
+            case OPEN_ACCOUNT -> {
                 try {
                     status = Pages.openAccountPage(status);
                     status = service.insert(status);
@@ -97,7 +99,7 @@ public class Service {
                     e.printStackTrace();
                 }
             }
-            case "close_account" -> {
+            case CLOSE_ACCOUNT -> {
                 try {
                     status = service.delete(status);
                 } catch (SQLException e) {
@@ -119,7 +121,7 @@ public class Service {
 
         switch (status.getWorkName()) {
 
-            case "account_history" -> {
+            case ACCOUNT_HISTORY -> {
                 ArrayList<Trade> tradeList;
                 try {
                     tradeList = service.selectAccountHistory(status);
@@ -129,16 +131,16 @@ public class Service {
 
                 }
             }
-            case "deposit", "withdraw" -> {
+            case DEPOSIT, WITHDRAW -> {
                 AccountService accountService = new AccountService();
                 ArrayList<Account> accountList = new ArrayList<>();
 
-                if (status.getWorkName().equals("deposit")) {
+                if (status.getWorkName().equals(Tag.DEPOSIT)) {
                     status = Pages.checkDepoistToOtherPage(status);
                 }
 
-                if (status.getWorkName().equals("withdraw") ||
-                    (status.getWorkName().equals("deposit") && status.getData().equals("my_account"))){
+                if (status.getWorkName().equals(Tag.WITHDRAW) ||
+                    (status.getWorkName().equals(Tag.DEPOSIT) && status.getData().equals("my_account"))){
                     try {
                         accountList = accountService.selectMyAllAccount(status);
                     } catch (SQLException e) {
@@ -147,7 +149,8 @@ public class Service {
                     status = Pages.selectAccountPage(status, accountList);
                 }
 
-                if (!status.getMessage().contains("[Error]") && !status.getMessage().contains("취소")) {
+                if (!status.getMessage().contains(Message.ERROR.getMessage())
+                    && !status.getMessage().contains(Message.CANCLE.getMessage())) {
                     // 입/출금 정보 생성
                     trade = Pages.inputTradeInfo(status);
                     // 거래 insert 후 계좌 update 실행
@@ -158,7 +161,7 @@ public class Service {
                     }
                 }
             }
-            case "transfer" -> {
+            case TRANSFER -> {
                 AccountService accountService = new AccountService();
                 ArrayList<Account> accountList = new ArrayList<>();
                 boolean inputError = true;
@@ -170,7 +173,8 @@ public class Service {
                 }
                 status = Pages.selectAccountPage(status, accountList);
 
-                if (!status.getMessage().contains("[Error]") && !status.getMessage().contains("취소")) {
+                if (!status.getMessage().contains(Message.ERROR.getMessage())
+                    && !status.getMessage().contains(Message.CANCLE.getMessage())) {
                     // 송금정보 생성
                     trade = Pages.inputTradeInfo(status);
 

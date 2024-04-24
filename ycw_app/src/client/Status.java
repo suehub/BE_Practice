@@ -1,30 +1,34 @@
 package client;
 
+import controller.Flow;
+import controller.Tag;
+
 public class Status {
-    private String workFlow;
-    private String userId;
-    private String workName;
-    private String data;
+    private Flow workFlow;
+    private Tag workName;
     private String message;
+    private String userId;
+    private String data;
+
 
 
     public Status() {
         super();
     }
 
-    public Status(String workflow) {
+    public Status(Flow workflow) {
         this.workFlow = workflow;
-        this.userId = "non_signed_guest";
-        this.workName = "log_in";
-        this.data = "";
+        this.workName = Tag.LOG_IN;
         this.message = "";
+        this.userId = Flow.NEW_GUEST.getFlow();
+        this.data = "";
     }
 
-    public String getWorkFlow() {
+    public Flow getWorkFlow() {
         return workFlow;
     }
 
-    public void setWorkFlow(String workFlow) {
+    public void setWorkFlow(Flow workFlow) {
         this.workFlow = workFlow;
     }
 
@@ -36,11 +40,11 @@ public class Status {
         this.userId = userId;
     }
 
-    public String getWorkName() {
+    public Tag getWorkName() {
         return workName;
     }
 
-    public void setWorkName(String workName) {
+    public void setWorkName(Tag workName) {
         this.workName = workName;
     }
 

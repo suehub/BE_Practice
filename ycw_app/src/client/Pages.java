@@ -7,15 +7,17 @@ import user.User;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import controller.*;
+
 public class Pages {
 
     static Scanner sc = new Scanner(System.in);
 
     public static Status mainPage(Status status) {
-        String page = "";
-        String workNum;
+        status.setWorkFlow(Flow.RUN);
+        String page, workNum;
 
-        page += "----------------------------------\n";
+        page = "----------------------------------\n";
         page += "             뱅킹 시스템            \n";
         page += "----------------------------------\n";
         page += "  1. 내 정보\n";
@@ -29,17 +31,17 @@ public class Pages {
         System.out.print(page);
         workNum = sc.next();
         if (workNum.equals("1")) {
-            status.setWorkName("my_page");
+            status.setWorkName(Tag.MY_PAGE);
         } else if (workNum.equals("2")) {
-            status.setWorkName("manage_accounts");
+            status.setWorkName(Tag.MANAGE_ACCOUNTS);
         } else if (workNum.equals("3")) {
-            status.setWorkName("deposit");
+            status.setWorkName(Tag.DEPOSIT);
         } else if (workNum.equals("4")) {
-            status.setWorkName("withdraw");
+            status.setWorkName(Tag.WITHDRAW);
         } else if (workNum.equals("5")) {
-            status.setWorkName("transfer");
+            status.setWorkName(Tag.TRANSFER);
         } else {
-            status.setMessage("[Error] 0. ~ 8.  사이로 입력해주세요");
+            status.setMessage(Message.ERROR_WRONG_INPUT.getMessage());
         }
         return status;
     }
@@ -60,17 +62,15 @@ public class Pages {
         workNum = sc.next();
 
         if (workNum.equals("0")) {
-            status.setWorkFlow("stop");
+            status.setWorkFlow(Flow.STOP);
         } else if (workNum.equals("1")) {
-            status.setMessage("[Info] 로그인을 진행합니다.");
-            status.setUserId("signed_guest");
+            status.setMessage(Message.INFO_EXCUTE_LOGIN.getMessage());
+            status.setUserId(Flow.OLD_GUEST.getFlow());
         } else if (workNum.equals("2")){
-            status.setMessage("[Info] 회원가입을 진행합니다.");
-            status.setWorkName("sign_up");
-        } else if (workNum.equals("3")){
-            status.setWorkFlow("stop");
+            status.setMessage(Message.INFO_EXCUTE_SIGNUP.getMessage());
+            status.setWorkName(Tag.SIGN_UP);
         } else {
-            status.setMessage("[Error] 0. ~ 2.  사이로 입력해주세요");
+            status.setMessage(Message.ERROR_WRONG_INPUT.getMessage());
         }
 
         return status;
@@ -79,9 +79,9 @@ public class Pages {
 
     public static User loginPage() {
         User user = new User();
-        String page = "";
-        String workNum;
-        page += "----------------------------------\n";
+        String page, workNum;
+
+        page = "----------------------------------\n";
         page += "              log-in\n";
         page += "----------------------------------\n";
         page += "- ID: ";
@@ -116,14 +116,15 @@ public class Pages {
 
     public static Status myInfoPage(Status status, User user) {
         String page;
+
         page = "----------------------------------\n";
         page += "              내 정보\n";
         page += "----------------------------------\n";
         page += " ID: " + user.getuserId() + "\n";
         page += " 이름: " + user.getName();
         System.out.println(page);
-        status.setWorkName("main");
-        status.setWorkFlow("continue");
+        status.setWorkName(Tag.MAIN);
+        status.setWorkFlow(Flow.CONTINUE);
 
         return status;
     }
@@ -166,30 +167,26 @@ public class Pages {
         System.out.print(page);
         workNum = sc.next();
         if (workNum.equals("0")) {
-            status.setWorkName("main");
-            status.setWorkFlow("run");
+            status.setWorkName(Tag.MAIN);
         }
         else if (workNum.equals("1")) {
-            status.setWorkName("open_account");
-            status.setWorkFlow("redirect");
+            status.setWorkName(Tag.OPEN_ACCOUNT);
         } else if (workNum.equals("2")) {
             System.out.println("----------------------------------");
             System.out.println(" 조회할 계좌의 번호(No)를 선택 하세요.");
             System.out.println("----------------------------------");
             System.out.print("[input] ");
             status.setData(accountList.get(sc.nextInt()-1).getaccountNum());
-            status.setWorkName("account_history");
-            status.setWorkFlow("redirect");
+            status.setWorkName(Tag.ACCOUNT_HISTORY);
         } else if (workNum.equals("3")) {
             System.out.println("----------------------------------");
             System.out.println(" 해지할 계좌의 번호(No)를 선택 하세요.");
             System.out.println("----------------------------------");
             System.out.print("[input] ");
             status.setData(accountList.get(sc.nextInt()-1).getaccountNum());
-            status.setWorkName("close_account");
-            status.setWorkFlow("redirect");
+            status.setWorkName(Tag.CLOSE_ACCOUNT);
         } else {
-            status.setMessage("[Error] 0. ~ 3.  사이로 입력해주세요");
+            status.setMessage(Message.ERROR_WRONG_INPUT.getMessage());
         }
         System.out.println("----------------------------------");
 
@@ -198,6 +195,7 @@ public class Pages {
 
     public static Status accountHistoryPage(Status status, ArrayList<Trade> tradeList) {
         String page;
+
         page = "----------------------------------\n";
         page += "     "+ status.getData() + " 계좌 거래내역\n";
         page += "----------------------------------\n";
@@ -226,8 +224,8 @@ public class Pages {
         }
         page += "----------------------------------\n";
         System.out.println(page);
-        status.setWorkName("manage_accounts");
-        status.setWorkFlow("continue");
+        status.setWorkName(Tag.MANAGE_ACCOUNTS);
+        status.setWorkFlow(Flow.CONTINUE);
 
         return status;
     }
@@ -245,11 +243,10 @@ public class Pages {
         System.out.println(page);
         workNum = sc.next();
         if (workNum.equals("0")) {
-            status.setMessage("[Info] 계좌 해지를 취소합니다.");
-            status.setWorkName("manage_accounts");
-            status.setWorkFlow("redirect");
+            status.setMessage(Message.INFO_CANCLE_CLOSE_ACCOUNT.getMessage());
+            status.setWorkName(Tag.MANAGE_ACCOUNTS);
         } else {
-            status.setMessage("[Error] 0. ~ 1. 사이로 입력해주세요");
+            status.setMessage(Message.ERROR_WRONG_INPUT.getMessage());
         }
 
         return status;
@@ -272,25 +269,25 @@ public class Pages {
 
         workNum = sc.next();
         if (workNum.equals("0")) {
-            status.setMessage("[Info] 상품 가입을 취소합니다.");
-            status.setWorkName("manage_accounts");
-            status.setWorkFlow("redirect");
+            status.setMessage(Message.INFO_CANCLE_OPEN_ACCOUNT.getMessage());
+            status.setWorkName(Tag.MANAGE_ACCOUNTS);
         } else if (workNum.equals("1")) {
-            status.setData("예금");
+            status.setData(Tag.DEPOSIT_ACCOUNT.getTag());
         } else if (workNum.equals("2")) {
-            status.setData("적금");
+            status.setData(Tag.SAVINGS_ACCOUNT.getTag());
         } else if (workNum.equals("3")) {
-            status.setData("CMA");
+            status.setData(Tag.CACHE_MANAGEMENT_ACCOUNT.getTag());
         } else {
-            status.setMessage("[Error] 0. ~ 3. 사이로 입력해주세요");
+            status.setMessage(Message.ERROR_WRONG_INPUT.getMessage());
         }
-        System.out.println("[Info] " + status.getData()  + " 상품 가입을 진행합니다." );
+        System.out.println(Message.INFO_EXCUTE_OPEN_ACCOUNT.getMessage(status.getData()));
 
         return status;
     }
 
     public static Status checkDepoistToOtherPage(Status status) {
         String page;
+
         page = "----------------------------------\n";
         page += "           입금 대상 선택\n";
         page += "----------------------------------\n";
@@ -302,11 +299,11 @@ public class Pages {
         String workNum = sc.next();
 
         if (workNum.equals("1")) {
-            status.setData("my_account");
+            status.setData(Tag.MY_ACCOUNT.getTag());
         } else if (workNum.equals("2")) {
-            status.setData("others_account");
+            status.setData(Tag.OTHER_ACCOUNT.getTag());
         } else {
-            status.setMessage("[Error] 1. ~ 2. 사이로 입력해주세요");
+            status.setMessage(Message.ERROR_WRONG_INPUT.getMessage());
         }
 
         return status;
@@ -314,15 +311,14 @@ public class Pages {
 
 
     public static Status selectAccountPage(Status status, ArrayList<Account> accountList) {
-        String page;
-        String work = "";
-        String workNum;
+        String page, workNum, work;
+        work = "";
 
-        if (status.getWorkName().equals("deposit")) {
-            work = "입금";
-        } else if (status.getWorkName().equals("withdraw")) {
+        if (status.getWorkName().equals(Tag.DEPOSIT)) {
+            work = ;
+        } else if (status.getWorkName().equals(Tag.WITHDRAW)) {
             work = "출금";
-        } else if (status.getWorkName().equals("transfer")) {
+        } else if (status.getWorkName().equals(Tag.TRANSFER)) {
             work = "송금";
         }
 
@@ -351,7 +347,7 @@ public class Pages {
         page += "----------------------------------\n";
 
         if (!accountList.isEmpty()) {
-            page += "[Info] " + work + "할 계좌의 번호(No)를 선택하세요.\n";
+            page += "     " + work + "할 계좌의 번호(No)를 선택하세요.\n";
             page += "  0. 뒤로가기\n";
             page += "----------------------------------\n";
             page += "[input] ";
@@ -359,8 +355,7 @@ public class Pages {
             workNum = sc.next();
 
             if (workNum.equals("0")) {
-                status.setWorkName("main");
-                status.setWorkFlow("redirect");
+                status.setWorkName(Tag.MAIN);
                 status.setMessage("[Info] " + work + "을 취소합니다.");
                 return status;
             } else if (isNumberOnly(workNum)) {
@@ -376,12 +371,10 @@ public class Pages {
             System.out.print(page);
             workNum = sc.next();
             if (workNum.equals("1")) {
-                status.setWorkName("open_account");
-                status.setWorkFlow("redirect");
+                status.setWorkName(Tag.OPEN_ACCOUNT);
             } else if (workNum.equals("2")) {
                 status.setMessage("[Info] 작업을 취소합니다.");
-                status.setWorkName("main");
-                status.setWorkFlow("redirect");
+                status.setWorkName(Tag.MAIN);
             } else {
                 status.setMessage("[Error] 1. ~ 2. 사이로 입력해주세요");
             }
@@ -393,11 +386,13 @@ public class Pages {
 
     public static Trade inputTradeInfo(Status status) {
         Trade trade = new Trade();
+
         switch (status.getWorkName()) {
-            case "deposit" -> trade.setAction("입금");
-            case "withdraw" -> trade.setAction("출금");
-            case "transfer" -> trade.setAction("송금");
+            case DEPOSIT -> trade.setAction("입금");
+            case WITHDRAW -> trade.setAction("출금");
+            case TRANSFER -> trade.setAction("송금");
         }
+
         System.out.println("----------------------------------");
         System.out.println("          "+ trade.getAction() +" 정보 입력");
         System.out.println("----------------------------------");
@@ -405,7 +400,7 @@ public class Pages {
         switch (trade.getAction()) {
             case "입금", "출금" -> {
                 trade.setRequestAccount("-");
-                if (trade.getAction().equals("입금") && status.getData().equals("others_account")){
+                if (trade.getAction().equals("입금") && status.getData().equals(Tag.OTHER_ACCOUNT.getTag())){
                     System.out.print("입금 계좌: ");
                     trade.setTargetAccount(sc.next());
                 } else {
@@ -437,14 +432,14 @@ public class Pages {
     public static void underPage (Status status) {
         String page;
 
-        if (status.getWorkFlow().equals("stop")) {
+        if (status.getWorkFlow().equals(Flow.STOP)) {
             page = "----------------------------------\n";
             page += "       뱅킹시스템 사용 종료\n";
             page += "----------------------------------\n";
             System.out.println(page);
         }
 
-        if (status.getWorkFlow().equals("continue")){
+        if (status.getWorkFlow().equals(Flow.CONTINUE)){
             page = "[Info] 아무 키나 입력하여 계속: ";
             System.out.print(page);
             String a = sc.next();

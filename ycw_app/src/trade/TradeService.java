@@ -110,7 +110,7 @@ public class TradeService {
             status.setMessage(accountDao.updateOne(con,trade,false));
 
 
-            status.setWorkName("manage_account");
+            status.setWorkName("manage_accounts");
             status.setWorkFlow("redirect");
         } finally {
             if(con!=null) con.close();

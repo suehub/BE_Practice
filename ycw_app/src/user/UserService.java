@@ -2,11 +2,13 @@ package user;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 import client.Status;
 import repository.DriverConnector;
+import controller.*;
 
-import java.util.Scanner;
+
 
 public class UserService {
 
@@ -24,12 +26,12 @@ public class UserService {
         try {
             ArrayList<User> userCheck = dao.selectOne(con, user.getuserId());
             if (!userCheck.isEmpty()){
-                status.setMessage("[Error] 이미 가입된 회원입니다.");
+                status.setMessage(Message.ERROR_EXIST_USER.getMessage());
                 return status;
             }
             status.setMessage(dao.insert(con, user));
-            status.setUserId("signed_guest");
-            status.setWorkName("log_in");
+            status.setUserId(Flow.OLD_GUEST.getFlow());
+            status.setWorkName(Tag.LOG_IN);
         } finally {
             if(con!=null) con.close();
         }
@@ -47,10 +49,11 @@ public class UserService {
             userList = dao.selectLogIn(con, user.getuserId(), user.getPassword());
             if (!userList.isEmpty()){
                 status.setUserId(userList.getFirst().getuserId());
-                status.setMessage("[Info] " + userList.getFirst().getName() + "님 환영합니다.");
-                status.setWorkName("main");
+                status.setMessage(Message.INFO_SUCCESS_LOGIN.getMessage(userList.getFirst().getName()));
+
+                status.setWorkName(Tag.MAIN);
             } else if (userList.isEmpty()){
-                status.setMessage("[Error] ID와 비밀번호를 확인하세요.");
+                status.setMessage(Message.ERROR_LOGIN_FAILED.getMessage());
             }
         } finally {
             if(con!=null) con.close();
