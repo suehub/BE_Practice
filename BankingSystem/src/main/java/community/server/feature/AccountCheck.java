@@ -8,7 +8,7 @@ import java.util.Objects;
 import java.util.Scanner;
 
 public abstract class AccountCheck {
-  boolean accountCheck() {
+  public boolean accountCheck() {
     Scanner sc = new Scanner(System.in);
     System.out.println("please enter your account number: ");
     String sql = "SELECT * FROM account WHERE account_num = ?";
