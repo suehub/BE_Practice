@@ -1,12 +1,12 @@
 package community.Client;
 
-import community.db.JdbcConnection;
-import community.feature.AccountCreation;
-import community.feature.AccountDeletion;
-import community.feature.AccountDeposit;
-import community.feature.AccountSearch;
-import community.feature.AccountTransaction;
-import community.feature.AccountWithdrawal;
+import community.server.db.JdbcConnection;
+import community.server.feature.AccountCreation;
+import community.server.feature.AccountDeletion;
+import community.server.feature.AccountDeposit;
+import community.server.feature.AccountSearch;
+import community.server.feature.AccountTransaction;
+import community.server.feature.AccountWithdrawal;
 import java.util.Scanner;
 
 public class Client {
@@ -19,7 +19,7 @@ public class Client {
     int choice = ShowMenu.getSelection();
     switch(choice){
       case 1 -> {
-        AccountSearch as = new AccountSearch(sc);
+        AccountSearch as = new AccountSearch();
         as.run();
       }
       case 2 ->{

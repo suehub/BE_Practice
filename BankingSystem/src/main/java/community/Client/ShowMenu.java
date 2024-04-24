@@ -1,6 +1,6 @@
 package community.Client;
 
-import community.exceptions.GlobalExceptionConfig;
+import community.server.exceptions.GlobalExceptionConfig;
 import java.util.Scanner;
 
 public class ShowMenu {

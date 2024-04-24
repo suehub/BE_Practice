@@ -12,9 +12,14 @@ repositories {
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
-    testImplementation group: 'junit', name: 'junit', version: '4.13.2'
     testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: '5.11.0'
     implementation 'mysql:mysql-connector-java:8.0.28'
+    testImplementation 'org.testcontainers:mysql:1.17.3'
+    testImplementation 'org.powermock:powermock-api-mockito2:2.0.9'
+
+    testImplementation 'org.testcontainers:testcontainers:1.17.6'
+    testImplementation 'org.testcontainers:junit-jupiter:1.17.6'
+    implementation 'ch.qos.logback:logback-core:1.5.3'
     testImplementation 'org.assertj:assertj-core:3.24.2'
     testImplementation group: 'org.mockito', name: 'mockito-core', version: '5.0.0'
 

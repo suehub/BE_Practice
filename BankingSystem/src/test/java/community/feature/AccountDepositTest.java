@@ -1,6 +1,7 @@
 package community.feature;
 
 
+import community.server.feature.AccountDeposit;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -32,6 +33,17 @@ class AccountDepositTest {
     // 테스트 결과를 출력한 후, 해당 결과를 String으로 저장하여 확인합니다.
     String printedOutput = getPrintedOutput();
     Assertions.assertThat(printedOutput).contains("Account Number: 14");
+  }
+  @Test
+  @DisplayName("If deposit amount is negative or zero")
+  void testDepositAmount(){
+    String input = "14";
+    byte[] inputBytes = input.getBytes();
+    ByteArrayInputStream in = new ByteArrayInputStream(inputBytes);
+    Scanner fakeScanner = new Scanner(in);
+    System.setOut(new PrintStream(outputStreamCaptor));
+    AccountDeposit accountCheck = new AccountDeposit(fakeScanner);
+
   }
 
   @Test
