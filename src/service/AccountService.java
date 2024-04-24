@@ -34,24 +34,17 @@ public class AccountService {
             pstmt.setString(1, accountId);
             pstmt.setString(2, userId);
             pstmt.executeUpdate();
-            System.out.println(userId + "님의 계좌는 " + accountId + " 입니다.");
+            System.out.println(userId+"님의 계좌가 생성되었습니다.  \n" +
+                    "생성된 계좌번호는"+ accountId+" 입니다.");;
         } catch (SQLException se) {
             System.out.println("없는 ID 입니다.");
 
         }
-//        finally {
-//            try {
-//                if (conn != null) conn.close();
-//            } catch(SQLException se) {
-//                se.printStackTrace();
-//            }
-//        }
     }
 
     public static void deleteAccount(String accountId) throws SQLException {
         PreparedStatement pstmt;
         String sql = AccountRepository.deleteAccount();
-
         try (Connection conn = JdbcConnection.JdbcConnection()) {
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, accountId);
@@ -73,7 +66,7 @@ public class AccountService {
         System.out.println("입금 하실 금액을 입력해주세요.");
         int amount = scanner.nextInt();
         if(amount <= 0){
-            System.out.println("금액은 0보다 커야합니다.");
+            System.out.println("0원 이하는 거래가 불가능합니다.");
             return;
         }
         PreparedStatement pstmt;
@@ -83,6 +76,7 @@ public class AccountService {
             pstmt.setInt(1, amount);
             pstmt.setString(2, accountId);
             pstmt.executeUpdate();
+            System.out.println("입금되었습니다.");
         } catch(SQLException se) {
             System.out.println("잘못된 접근입니다.");
         } finally {
@@ -96,11 +90,11 @@ public class AccountService {
         int amount = scanner.nextInt();
         int balance = balance(accountId);
         if(amount <= 0){
-            System.out.println("금액은 0보다 커야합니다.");
+            System.out.println("0원 이하는 거래가 불가능합니다.");
             return false;
         }
         if(amount > balance){
-            System.out.println("잔액보다 출금 금액이 큽니다.");
+            System.out.println("출금 금액이 잔액을 초과했습니다.");
             return false;
         }
         PreparedStatement pstmt;
@@ -152,11 +146,11 @@ public class AccountService {
         int amount = scanner.nextInt();
         int balance = balance(fromAccountId);
         if(amount <= 0){
-            System.out.println("금액은 0보다 커야합니다.");
+            System.out.println("0원 이하는 거래가 불가능합니다.");
             return false;
         }
         if(amount > balance){
-            System.out.println("잔액보다 출금 금액이 큽니다.");
+            System.out.println("출금 금액이 잔액을 초과했습니다.");
             return false;
         }
 

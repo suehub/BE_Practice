@@ -21,7 +21,7 @@ public class Service {
         }
 
         while(true){ // Pw 확인
-            if(UserService.findUserPw(scanner)){
+            if(UserService.findUserPw(userId, scanner)){
                 break;
             }
         }

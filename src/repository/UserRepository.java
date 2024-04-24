@@ -9,6 +9,6 @@ public class UserRepository {
         return "SELECT UserId FROM User WHERE Userid = ?";
     }
     public static String findUserPassword(){
-        return "SELECT password FROM User WHERE password = ?";
+        return "SELECT userId FROM User WHERE userId = ? AND password = ?";
     }
 }

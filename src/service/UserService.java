@@ -49,14 +49,15 @@ public class UserService {
     }
 
 
-    public static boolean findUserPw(Scanner scanner) throws SQLException{
+    public static boolean findUserPw(String userId, Scanner scanner) throws SQLException{
         System.out.println("비밀 번호를 입력하세요: ");
-        String userId = scanner.next();
+        String password = scanner.next();
 
         String sql = UserRepository.findUserPassword();
         try (Connection conn = JdbcConnection.JdbcConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, userId);
+            pstmt.setString(2, password);
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {

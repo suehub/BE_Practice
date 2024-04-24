@@ -5,7 +5,7 @@ public class AccountRepository {
         return "INSERT INTO Account (AccountId, balance, User_UserId) VALUES (?, 0, ?)";
     }
     public static String deleteAccount(){
-        return "DELETE FROM Account WHERE accountId = ? ";
+        return "DELETE FROM Account WHERE AccountId = ? ";
     }
     public static String depositAccount(){
         return "UPDATE Account SET balance = balance + ? WHERE AccountId = ?";
