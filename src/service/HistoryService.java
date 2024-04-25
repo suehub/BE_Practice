@@ -1,5 +1,6 @@
 package src.service;
 
+import src.Exception.GlobalException;
 import src.db.JdbcConnection;
 
 import java.sql.Connection;
@@ -10,7 +11,7 @@ import java.util.Scanner;
 
 public class HistoryService {
 
-    public static void getTransactionHistory(String accountId) throws SQLException {
+    public static void getTransactionHistory(String accountId) {
         PreparedStatement pstmt;
         String sql = "SELECT * FROM history WHERE Account_AccountId = ?";
         try (Connection conn = JdbcConnection.JdbcConnection()) {
@@ -26,15 +27,9 @@ public class HistoryService {
                     System.out.println("----------------------");
                 }
             }
-        }catch(SQLException se) {
+        }catch(Exception e) {
             System.out.println("없는 계좌입니다.");
+            GlobalException.log(e);
         }
-//        finally {
-//            try {
-//                if (conn != null) conn.close();
-//            } catch(SQLException se) {
-//                se.printStackTrace();
-//            }
-//        }
     }
 }

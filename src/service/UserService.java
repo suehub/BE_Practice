@@ -1,5 +1,6 @@
 package src.service;
 
+import src.Exception.GlobalException;
 import src.db.JdbcConnection;
 import src.repository.UserRepository;
 
@@ -24,8 +25,9 @@ public class UserService {
             pstmt.setString(2, password);
             pstmt.executeUpdate();
             System.out.println("사용자가 생성되었습니다.");
-        }catch(SQLException se) {
-            System.out.println("이미 존재합니다.");
+        }catch(Exception e) {
+            System.out.println("이미 존재합니다");
+            GlobalException.log(e);
         }
     }
 
@@ -42,9 +44,9 @@ public class UserService {
                  System.out.println("사용자가 존재하지 않습니다.");
                  return false;
              }
-        } catch (SQLException e) {
-             e.printStackTrace();
-             return false;
+        } catch(Exception e) {
+            GlobalException.log(e);
+            return false;
         }
     }
 
@@ -67,8 +69,8 @@ public class UserService {
                 System.out.println("비밀번호가 틀립니다.");
                 return false;
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch(Exception e) {
+            GlobalException.log(e);
             return false;
         }
     }

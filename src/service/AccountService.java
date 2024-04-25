@@ -1,5 +1,6 @@
 package src.service;
 
+import src.Exception.GlobalException;
 import src.db.JdbcConnection;
 import src.repository.AccountRepository;
 
@@ -16,7 +17,7 @@ import java.util.Scanner;
 
 public class AccountService {
 
-    public static void createAccount(String userId) throws SQLException {
+    public static void createAccount(String userId) {
 
         Random random = new Random();
         String accountId = "";
@@ -35,14 +36,14 @@ public class AccountService {
             pstmt.setString(2, userId);
             pstmt.executeUpdate();
             System.out.println(userId+"님의 계좌가 생성되었습니다.  \n" +
-                    "생성된 계좌번호는"+ accountId+" 입니다.");;
-        } catch (SQLException se) {
+                    "생성된 계좌번호는 "+ accountId+" 입니다.");;
+        } catch (Exception e) {
             System.out.println("없는 ID 입니다.");
-
+            GlobalException.log(e);
         }
     }
 
-    public static void deleteAccount(String accountId) throws SQLException {
+    public static void deleteAccount(String accountId){
         PreparedStatement pstmt;
         String sql = AccountRepository.deleteAccount();
         try (Connection conn = JdbcConnection.JdbcConnection()) {
@@ -50,13 +51,13 @@ public class AccountService {
             pstmt.setString(1, accountId);
             pstmt.executeUpdate();
             System.out.println("계좌가 삭제되었습니다.");
-        } catch (SQLException se) {
+        } catch (Exception e) {
             System.out.println("없는 계좌 입니다.");
-
+            GlobalException.log(e);
         }
     }
 
-    public static void deposit(Scanner scanner) throws SQLException {
+    public static void deposit(Scanner scanner){
         System.out.println("계좌 번호를 입력해주세요.");
         String accountId = scanner.next();
         if(!findOne(accountId)){
@@ -77,17 +78,26 @@ public class AccountService {
             pstmt.setString(2, accountId);
             pstmt.executeUpdate();
             System.out.println("입금되었습니다.");
-        } catch(SQLException se) {
-            System.out.println("잘못된 접근입니다.");
+        } catch(Exception e) {
+//            System.out.println("없는 계좌");
+            GlobalException.log(e);
         } finally {
             insertHistory(accountId, "입금", amount);
         }
 
     }
 
-    public static boolean withdraw(Scanner scanner, String accountId) throws SQLException {
+    public static boolean withdraw(Scanner scanner, String accountId) {
         System.out.println("출금 하실 금액을 입력해주세요.");
-        int amount = scanner.nextInt();
+        int amount = 0;
+        try {
+            amount = scanner.nextInt();
+
+        }catch (Exception e){
+            GlobalException.log(e);
+            scanner.nextLine();
+        }
+
         int balance = balance(accountId);
         if(amount <= 0){
             System.out.println("0원 이하는 거래가 불가능합니다.");
@@ -104,6 +114,8 @@ public class AccountService {
             pstmt.setInt(1, amount);
             pstmt.setString(2, accountId);
             pstmt.executeUpdate();
+        } catch(Exception e) {
+            GlobalException.log(e);
         }
         insertHistory(accountId, "출금", amount);
         return true;
@@ -119,18 +131,20 @@ public class AccountService {
                 if (rs.next()) {
                     return rs.getInt("balance");
                 } else {
-                    throw new SQLException("계좌가 존재하지 않습니다.");
+                    throw new Exception("계좌가 존재하지 않습니다.");
                 }
+            } catch(Exception e) {
+                GlobalException.log(e);
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        }  catch(Exception e) {
+            GlobalException.log(e);
         }
         return 0;
     }
 
 
 
-    public static boolean transfer(Scanner scanner, String fromAccountId) throws SQLException {
+    public static boolean transfer(Scanner scanner, String fromAccountId) {
 //        conn.setAutoCommit(false);
         System.out.println("보낼 계좌 번호를 입력해주세요.");
         String toAccountId = scanner.next();
@@ -143,10 +157,19 @@ public class AccountService {
             return false;
         }
         System.out.println("송금 하실 금액을 입력해주세요.");
-        int amount = scanner.nextInt();
+
+        int amount = 0;
+        try {
+            amount = scanner.nextInt();
+
+        }catch (Exception e){
+            GlobalException.log(e);
+            scanner.nextLine();
+        }
+
         int balance = balance(fromAccountId);
         if(amount <= 0){
-            System.out.println("0원 이하는 거래가 불가능합니다.");
+            System.out.println("0원 또는 문자는 거래가 불가능합니다.");
             return false;
         }
         if(amount > balance){
@@ -162,17 +185,13 @@ public class AccountService {
 //            conn.commit();
             insertHistory(fromAccountId, "송금", amount);
             insertHistory(toAccountId, "입금", amount);
-        } catch (SQLException e) {
-//            conn.rollback();
-            throw e;
-        } finally {
-//            conn.setAutoCommit(true);
-//        }
+        }  catch(Exception e) {
+            GlobalException.log(e);
         }
         return true;
     }
 
-    private static void deposit(String toAccountId, int amount) throws SQLException {
+    private static void deposit(String toAccountId, int amount) {
         String sql = AccountRepository.depositAccount();
         PreparedStatement pstmt;
         try (Connection conn = JdbcConnection.JdbcConnection()) {
@@ -180,10 +199,12 @@ public class AccountService {
             pstmt.setInt(1, amount);
             pstmt.setString(2, toAccountId);
             pstmt.executeUpdate();
+        } catch(Exception e) {
+            GlobalException.log(e);
         }
     }
 
-    private static void withdraw(String fromAccountId, int amount) throws SQLException {
+    private static void withdraw(String fromAccountId, int amount) {
         String sql = AccountRepository.withdrawAccount();
 
         PreparedStatement pstmt;
@@ -192,10 +213,12 @@ public class AccountService {
             pstmt.setInt(1, amount);
             pstmt.setString(2, fromAccountId);
             pstmt.executeUpdate();
+        } catch(Exception e) {
+            GlobalException.log(e);
         }
     }
 
-    static void insertHistory(String accountId, String type, int amount) throws SQLException {
+    static void insertHistory(String accountId, String type, int amount) {
         String sql = AccountRepository.historyAccount();
         PreparedStatement pstmt;
         String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분 ss초"));
@@ -207,6 +230,8 @@ public class AccountService {
             pstmt.setInt(4, amount);
             pstmt.setString(5, time);
             pstmt.executeUpdate();
+        } catch(Exception e) {
+            GlobalException.log(e);
         }
     }
 
@@ -226,8 +251,10 @@ public class AccountService {
                     System.out.println(list.size()+". "+s+" 잔액 : "+ bal);
                 }
             }
-        }catch(SQLException se) {
+        } catch(SQLException se) {
             System.out.println("없는 계좌입니다.");
+        }catch(Exception e) {
+            GlobalException.log(e);
         }
         return list;
     }
@@ -248,7 +275,10 @@ public class AccountService {
             }
         }catch(SQLException se) {
             System.out.println("없는 계좌입니다.");
+        }catch(Exception e) {
+            GlobalException.log(e);
         }
+
         return false;
     }
 
