@@ -12,10 +12,11 @@ public abstract class AccountCheck {
     Scanner sc = new Scanner(System.in);
     System.out.println("please enter your account number: ");
     String sql = "SELECT * FROM account WHERE account_num = ?";
-    int accountNum= sc.nextInt();
+    String accountNum= sc.nextLine();
+
     try (Connection con = ConnectionFactory.INSTANCE.getConnection()){
       PreparedStatement ps = Objects.requireNonNull(con).prepareStatement(sql);
-      ps.setInt(1, accountNum);
+      ps.setString(1, accountNum);
       if (!ps.executeQuery().next()) {
         con.rollback();
         return false;

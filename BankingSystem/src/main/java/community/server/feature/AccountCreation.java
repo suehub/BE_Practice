@@ -24,7 +24,11 @@ public class AccountCreation  extends AccountCheck{
   private void AccountCreationDB() {
     System.out.println("what is your name? :");
 
-    String accountNum = sc.nextLine();
+    String accountNickName = sc.nextLine();
+    if(!isValidName(accountNickName)){
+      System.out.println("Invalid name");
+      return;
+    }
     LocalDateTime accountOpen = LocalDateTime.now();
     int AccountType = 1;
     if(accountCheck()){
@@ -40,7 +44,7 @@ public class AccountCreation  extends AccountCheck{
       ps.setBytes(1, uuidToBytes(uuid));
       ps.setTimestamp(2, Timestamp.valueOf(accountOpen));
       ps.setInt(3, AccountType);
-      ps.setString(4, accountNum);
+      ps.setString(4, accountNickName);
       int result = ps.executeUpdate();
       if(result <= 0){
         con.rollback();
@@ -57,7 +61,10 @@ public class AccountCreation  extends AccountCheck{
     byteBuffer.putLong(uuid.getMostSignificantBits());
     byteBuffer.putLong(uuid.getLeastSignificantBits());
     return byteBuffer.array();
-
+  }
+  private boolean isValidName(String name){
+    String accountNicknamePattern = "^[\\w .'-]{1,20}$";
+    return name.matches(accountNicknamePattern);
   }
 
 }
