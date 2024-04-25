@@ -13,11 +13,11 @@ public abstract class AccountCheck {
     System.out.println("please enter your account number: ");
     String sql = "SELECT * FROM account WHERE account_num = ?";
     int accountNum= sc.nextInt();
-    try {
-      Connection con = ConnectionFactory.getConnection();
+    try (Connection con = ConnectionFactory.INSTANCE.getConnection()){
       PreparedStatement ps = Objects.requireNonNull(con).prepareStatement(sql);
       ps.setInt(1, accountNum);
       if (!ps.executeQuery().next()) {
+        con.rollback();
         return false;
       }
     } catch (Exception e) {

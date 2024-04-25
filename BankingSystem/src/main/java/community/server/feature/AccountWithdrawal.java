@@ -32,7 +32,7 @@ public class AccountWithdrawal {
 
   void checkAccountExists() {
     String sql = "SELECT * FROM account WHERE account_num = ?";
-    try (Connection connection = ConnectionFactory.getConnection();
+    try (Connection connection = ConnectionFactory.INSTANCE.getConnection();
         PreparedStatement statement = connection.prepareStatement(sql)) {
       statement.setInt(1, accountNumber);
       ResultSet resultSet = statement.executeQuery();
@@ -49,12 +49,13 @@ public class AccountWithdrawal {
 
   void getBalance() {
     String sql = "SELECT amount FROM balance WHERE account_num = ?";
-    try (Connection connection = ConnectionFactory.getConnection();
+    try (Connection connection = ConnectionFactory.INSTANCE.getConnection();
         PreparedStatement statement = connection.prepareStatement(sql)) {
       statement.setInt(1, accountNumber);
       ResultSet resultSet = statement.executeQuery();
       if (!resultSet.next()) {
         System.out.println("Balance not found");
+        connection.rollback();
         throw new RuntimeException("Balance not found");
       }
       balance = resultSet.getInt("amount");
@@ -76,11 +77,9 @@ public class AccountWithdrawal {
     String insertTransactionSql = "INSERT INTO transaction (account_num, amount, transaction_type) VALUES (?, ?, 'withdraw')";
     String updateBalanceSql = "UPDATE balance SET amount = amount - ? WHERE account_num = ?";
 
-    try (Connection connection = ConnectionFactory.getConnection();
-        PreparedStatement insertTransactionStatement = connection.prepareStatement(
-            insertTransactionSql);
+    try (Connection connection = ConnectionFactory.INSTANCE.getConnection();
+        PreparedStatement insertTransactionStatement = connection.prepareStatement(insertTransactionSql);
         PreparedStatement updateBalanceStatement = connection.prepareStatement(updateBalanceSql)) {
-      connection.setAutoCommit(false);
 
       insertTransactionStatement.setInt(1, accountNumber);
       insertTransactionStatement.setInt(2, withdrawalAmount);
@@ -91,10 +90,8 @@ public class AccountWithdrawal {
       int updatedRows = updateBalanceStatement.executeUpdate();
       if (updatedRows > 0) {
         connection.commit();
-        System.out.println("Amount withdrawn successfully");
       } else {
         connection.rollback();
-        System.out.println("Withdrawal failed");
       }
     } catch (SQLException e) {
       GlobalExceptionConfig.log(e);

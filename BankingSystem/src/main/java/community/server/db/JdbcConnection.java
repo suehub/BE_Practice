@@ -5,11 +5,11 @@ import community.server.exceptions.GlobalExceptionConfig;
 public class JdbcConnection {
   public JdbcConnection() {
     try{
-      ConnectionFactory.getConnection();
+      ConnectionFactory connectionFactory = ConnectionFactory.INSTANCE;
+      connectionFactory.getConnection();
     } catch (Exception e) {
       GlobalExceptionConfig.log(e);
     }
   }
-
 
 }

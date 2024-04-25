@@ -9,13 +9,12 @@ public class ShowMenu {
   }
   public void showMenu(){
     System.out.println("Welcome to the Banking System");
-    System.out.println("1. Search Account");
-    System.out.println("2. Deposit");
-    System.out.println("3. Withdraw");
-    System.out.println("4. Transfer");
-    System.out.println("5. Account Creation");
-    System.out.println("6. Account Deletion");
-    System.out.println("7. Exit");
+    System.out.println("1. Deposit");
+    System.out.println("2. Withdraw");
+    System.out.println("3. Transfer");
+    System.out.println("4. Account Creation");
+    System.out.println("5. Account Deletion");
+    System.out.println("6. Exit");
   }
 
   public static int getSelection() {

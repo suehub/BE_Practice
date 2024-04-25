@@ -25,15 +25,17 @@ public class AccountDeletion extends AccountCheck{
       System.out.println("Account does not exist");
       return;
     }
-    PreparedStatement ps;
     String sql = "delete from account where account_num = ?";
-    try(Connection con = ConnectionFactory.getConnection()) {
-      ps = Objects.requireNonNull(con).prepareStatement(sql);
+    try(Connection con = ConnectionFactory.INSTANCE.getConnection();
+        PreparedStatement ps = Objects.requireNonNull(con).prepareStatement(sql);
+    ) {
       ps.setInt(1, accountNum);
       int result = ps.executeUpdate();
-      if (result > 0) {
-        System.out.println("Account deleted successfully");
+      if (result <= 0) {
+        con.rollback();
+        System.out.println("Account deleted failed");
       }
+      con.commit();
     } catch (Exception e) {
       System.out.println("Error: " + e);
     }

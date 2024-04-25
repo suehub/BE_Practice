@@ -41,7 +41,7 @@ public class AccountTransaction {
   private void executeTransaction() {
     System.out.println("Transaction in progress...");
 
-    try (Connection connection = ConnectionFactory.getConnection()) {
+    try (Connection connection = ConnectionFactory.INSTANCE.getConnection()) {
       connection.setAutoCommit(false);
 
       checkBalance(connection, sourceAccountNumber, transactionAmount);
@@ -90,6 +90,9 @@ public class AccountTransaction {
       updateBalanceStatement.setInt(1, amount);
       updateBalanceStatement.setInt(2, accountNumber);
       updateBalanceStatement.executeUpdate();
+    } catch (SQLException e) {
+      connection.rollback();
+      throw e;
     }
   }
 }

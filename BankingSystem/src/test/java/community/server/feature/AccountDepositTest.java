@@ -1,7 +1,6 @@
-package community.feature;
+package community.server.feature;
 
 
-import community.server.feature.AccountDeposit;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
