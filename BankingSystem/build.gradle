@@ -13,16 +13,24 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
     testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: '5.11.0'
+    testImplementation group: 'org.mockito', name: 'mockito-core', version: '5.11.0'
     implementation 'mysql:mysql-connector-java:8.0.28'
+    //rxjava3
+    implementation 'io.reactivex.rxjava3:rxjava:3.1.5'
+    implementation 'com.github.f4b6a3:uuid-creator:5.3.2'
     implementation 'com.fasterxml.uuid:java-uuid-generator:4.3.0'
-    testImplementation 'org.testcontainers:mysql:1.17.3'
+    testImplementation 'org.testcontainers:mysql:1.17.6'
     testImplementation 'org.powermock:powermock-api-mockito2:2.0.9'
-
+    implementation 'org.mapstruct:mapstruct:1.4.2.Final'
     testImplementation 'org.testcontainers:testcontainers:1.17.6'
     testImplementation 'org.testcontainers:junit-jupiter:1.17.6'
     implementation 'ch.qos.logback:logback-core:1.5.3'
     testImplementation 'org.assertj:assertj-core:3.24.2'
-    testImplementation group: 'org.mockito', name: 'mockito-core', version: '5.0.0'
+    compileOnly 'org.projectlombok:lombok:1.18.30'
+    annotationProcessor 'org.projectlombok:lombok:1.18.30'
+    testCompileOnly 'org.projectlombok:lombok:1.18.30' // 테스트 의존성 추가
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.30' // 테스트 의존성 추가
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.4.2.Final'
 
 }
 

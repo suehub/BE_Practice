@@ -1,11 +1,10 @@
 package community.Client;
 
-import community.server.db.JdbcConnection;
-import community.server.feature.AccountCreation;
-import community.server.feature.AccountDeletion;
-import community.server.feature.AccountDeposit;
-import community.server.feature.AccountTransaction;
-import community.server.feature.AccountWithdrawal;
+import community.server.domain.account.AccountCreation;
+import community.server.domain.account.AccountDeletion;
+import community.server.domain.account.AccountDeposit;
+import community.server.domain.account.AccountTransaction;
+import community.server.domain.account.AccountWithdrawal;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -20,7 +19,6 @@ public class Main {
 
   private static void run() {
     Scanner sc = new Scanner(System.in);
-    new JdbcConnection();
     ShowMenu showMenu = new ShowMenu();
     showMenu.showMenu();
     int choice = ShowMenu.getSelection();

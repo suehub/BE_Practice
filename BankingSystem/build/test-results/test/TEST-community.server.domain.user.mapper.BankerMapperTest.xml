@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="community.server.domain.user.mapper.BankerMapperTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2024-04-27T11:26:00" hostname="MacBook-Pro-2.local" time="0.031">
+  <properties/>
+  <testcase name="매퍼가 모델을 전달해주는지 확인" classname="community.server.domain.user.mapper.BankerMapperTest" time="0.031"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

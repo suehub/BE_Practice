@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="community.server.feature.AccountCreationTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2024-04-25T01:18:55" hostname="MacBook-Pro-2.local" time="0.008">
-  <properties/>
-  <testcase name="Test if account nickname is invalid" classname="community.server.feature.AccountCreationTest" time="0.008"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>
