@@ -6,16 +6,15 @@ public class BankingApp {
 
     public static void main(String[] args) {
         Service service = new Service();
-        Status status = new Status(Flow.RUN);
+        Status status = new Status();
 
         do {
-            if (status.getWorkName().equals(Tag.MAIN.getTag())  && !status.getUserId().contains("guest")) {
+            if (status.getWorkTag() == Tag.MAIN  && !status.getUserId().contains(Flow.GUEST.getFlow())) {
                 status = Pages.mainPage(status);
             }
             service.serviceMenu(status);
 
-
-        } while (!status.getWorkFlow().equals(Flow.STOP.getFlow()));
+        } while (status.getWorkFlow() != Flow.STOP);
 
     }
 }

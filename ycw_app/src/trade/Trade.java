@@ -1,8 +1,10 @@
 package trade;
 
+import controller.Tag;
+
 public class Trade {
     private int tradeId;
-    private String action;
+    private Tag action;
     private String requestAccount;
     private String targetAccount;
     private int amount;
@@ -13,7 +15,7 @@ public class Trade {
         super();
     }
 
-    public Trade(int tradeId, String action, String requestAccount, String targetAccount, int amount, int reqBalance, int tarBalance) {
+    public Trade(int tradeId, Tag action, String requestAccount, String targetAccount, int amount, int reqBalance, int tarBalance) {
         this.tradeId = tradeId;
         this.action = action;
         this.requestAccount = requestAccount;
@@ -23,7 +25,7 @@ public class Trade {
         this.tarBalance = tarBalance;
     }
 
-    public Trade(int tradeId, String action, String requestAccount, String targetAccount, int amount) {
+    public Trade(int tradeId, Tag action, String requestAccount, String targetAccount, int amount) {
         this.tradeId = tradeId;
         this.action = action;
         this.requestAccount = requestAccount;
@@ -55,11 +57,11 @@ public class Trade {
         this.targetAccount = targetAccount;
     }
 
-    public String getAction() {
+    public Tag getAction() {
         return action;
     }
 
-    public void setAction(String action) {
+    public void setAction(Tag action) {
         this.action = action;
     }
 

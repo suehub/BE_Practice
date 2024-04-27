@@ -3,23 +3,23 @@ package trade;
 import account.Account;
 import account.AccountDao;
 import client.Status;
+import controller.Message;
+import controller.Tag;
 import repository.DriverConnector;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class TradeService {
 
-    Scanner sc = new Scanner(System.in);
     DriverConnector driverConnector = new DriverConnector();
     AccountDao accountDao = new AccountDao();
     TradeDao dao = new TradeDao();
 
     public Status insert(Status status, Trade trade) throws SQLException {
         Connection con = null;
-        ArrayList<Account> targetList = new ArrayList<>();
+        ArrayList<Account> targetList;
 
         // 신규 입/출금 Trade객체 유효성 검증
         con = driverConnector.connectDriver();
@@ -30,19 +30,19 @@ public class TradeService {
         }
 
         if (targetList.isEmpty()) {
-            status.setMessage("[Error] 올바른 계좌번호를 입력하세요.");
+            status.setMessage(Message.ERROR_WRONG_ACCOUNT.getMessage());
             return status;
         }
 
         int newTarBalance = 0;
-        if (trade.getAction().equals("입금")) {
+        if (trade.getAction().equals(Tag.ACTION_DEPOSIT)) {
             newTarBalance = targetList.getFirst().getBalance() + trade.getAmount();
-        } else if (trade.getAction().equals("출금")){
+        } else if (trade.getAction().equals(Tag.ACTION_WITHDRAW)){
             newTarBalance = targetList.getFirst().getBalance() - trade.getAmount();
         }
 
-        if (trade.getAction().equals("출금") && newTarBalance < 0) {
-            status.setMessage("[Error] 출금액이 보유잔고를 초과합니다.");
+        if (trade.getAction().equals(Tag.ACTION_WITHDRAW) && newTarBalance < 0) {
+            status.setMessage(Message.ERROR_FAILED_TRANSFER_OVER_BALANCE.getMessage(Tag.ACTION_WITHDRAW.getTag()));
             return status;
         }
         trade.setTarBalance(newTarBalance);
@@ -52,7 +52,7 @@ public class TradeService {
         con = driverConnector.connectDriver();
         try {
             resultMessage = dao.insert(con, trade);
-            if (resultMessage.contains("[Error]")){
+            if (resultMessage.contains(Message.ERROR.getMessage())){
                 status.setMessage(resultMessage);
                 return status;
             }
@@ -61,8 +61,7 @@ public class TradeService {
         } finally {
             if(con!=null) con.close();
         }
-        status.setWorkName("main");
-        status.setWorkFlow("redirect");
+        status.setWorkTag(Tag.MAIN);
 
         return status;
     }
@@ -83,10 +82,10 @@ public class TradeService {
         }
 
         if (targetList.isEmpty()) {
-            status.setMessage("[Error] 올바른 보낼 계좌번호를 입력하세요.");
+            status.setMessage(Message.ERROR_WRONG_REQUEST_ACCOUNT.getMessage());
             return status;
         } else if (requestList.isEmpty()) {
-            status.setMessage("[Error] 올바른 받는 계좌번호를 입력하세요.");
+            status.setMessage(Message.ERROR_WRONG_TARGET_ACCOUNT.getMessage());
             return status;
         }
 
@@ -94,7 +93,7 @@ public class TradeService {
         int newTarBalance = targetList.getFirst().getBalance() + trade.getAmount();
 
         if (newReqBalance < 0) {
-            status.setMessage("[Error] 송금액이 보유잔고를 초과합니다.");
+            status.setMessage(Message.ERROR_FAILED_TRANSFER_OVER_BALANCE.getMessage(Tag.ACTION_TRANSFER.getTag()));
             return status;
         }
         trade.setTarBalance(newTarBalance);
@@ -104,14 +103,11 @@ public class TradeService {
         con = driverConnector.connectDriver();
         try {
             status.setMessage(dao.insert(con, trade));
-            // 요청자 계좌 업데이트
+            // 요청 계좌 업데이트
             status.setMessage(accountDao.updateOne(con,trade,true));
-            // 수령자 계좌 업데이트
+            // 수령 계좌 업데이트
             status.setMessage(accountDao.updateOne(con,trade,false));
-
-
-            status.setWorkName("manage_accounts");
-            status.setWorkFlow("redirect");
+            status.setWorkTag(Tag.MANAGE_ACCOUNTS);
         } finally {
             if(con!=null) con.close();
         }

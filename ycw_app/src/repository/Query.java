@@ -8,7 +8,7 @@ public enum Query {
     USER_SELECT("my_page", () -> "select user_id, name from Users where user_id = ?;"),
     USER_INSERT("sign_up", () -> "insert into Users values(?,?,?);"),
     ACCOUNT_SELECT_MULTIPLE("manage_accounts", () -> "select account_number, Users_user_id, product_type, balance " +
-                                                     "from Accounts where Users_user_id = ?;"),
+                                                          "from Accounts where Users_user_id = ?;"),
     ACCOUNT_SELECT("select_account", () -> "select account_number, Users_user_id,product_type, balance  \n" +
                                                 "from practice_db.Accounts \n" +
                                                 "where account_number = ?;"),
@@ -17,8 +17,8 @@ public enum Query {
     ACCOUNT_UPDATE("trade", () -> "update Accounts set balance = ? where account_number = ?;"),
     TRADE_INSERT("insert_trade", () -> "insert into Trades values(nextval('TRADE_SEQ'),?,?,?,?,?,?);"),
     TRADE_SELECT_MUTIPLE("trade_history", () -> "select trade_id, action, request_account, target_account, amount from Trades " +
-                                "where request_account = ? or target_account = ? " +
-                                "order by trade_id;");
+                                                     "where request_account = ? or target_account = ? " +
+                                                     "order by trade_id;");
 
 
     private final String queryName;

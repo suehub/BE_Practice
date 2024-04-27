@@ -1,6 +1,9 @@
 package account;
 
 import client.Status;
+import controller.Flow;
+import controller.Message;
+import controller.Tag;
 import user.UserDao;
 import repository.DriverConnector;
 
@@ -40,9 +43,9 @@ public class AccountService {
 
             // 신규 계좌 insert
             status.setMessage(dao.insert(con, account));
-            status.setWorkName("manage_accounts");
-            status.setWorkFlow("continue");
-            status.setData("");
+            status.setWorkTag(Tag.MANAGE_ACCOUNTS);
+            status.setWorkFlow(Flow.CONTINUE);
+            status.setData(Tag.DEFAULT_DATA.getTag());
 
             return status;
         } finally {
@@ -88,14 +91,14 @@ public class AccountService {
             ArrayList<Account> accountCheck = dao.selectOne(con, status.getData());
 
             if (accountCheck.isEmpty()) {
-                status.setMessage("[Error] 존재하지 않는 계좌입니다.");
+                status.setMessage(Message.ERROR_WRONG_ACCOUNT.getMessage());
                 return status;
             }
             // 해지할 계좌 delete
             status.setMessage(dao.delete(con, status.getData()));
-            status.setWorkName("manage_accounts");
-            status.setWorkFlow("continue");
-            status.setData("");
+            status.setWorkTag(Tag.MANAGE_ACCOUNTS);
+            status.setWorkFlow(Flow.CONTINUE);
+            status.setData(Tag.DEFAULT_DATA.getTag());
 
             return status;
         } finally {

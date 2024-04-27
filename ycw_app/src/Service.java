@@ -17,7 +17,7 @@ public class Service {
     Status serviceMenu (Status status){
         status.setWorkFlow(Flow.RUN);
 
-        switch (status.getWorkName()) {
+        switch (status.getWorkTag()) {
             case LOG_IN, SIGN_UP, MY_PAGE -> userService(status);
             case MANAGE_ACCOUNTS, OPEN_ACCOUNT, CLOSE_ACCOUNT -> accountService(status);
             case ACCOUNT_HISTORY, DEPOSIT, WITHDRAW, TRANSFER -> tradeService(status);
@@ -32,7 +32,7 @@ public class Service {
         User user = new User();
         boolean inputError = true;
 
-        switch (status.getWorkName()){
+        switch (status.getWorkTag()){
             case LOG_IN -> {
             if (status.getUserId().equals(Flow.NEW_GUEST.getFlow())){
                     status = Pages.checkUserPage(status);
@@ -81,7 +81,7 @@ public class Service {
     Status accountService(Status status) {
         AccountService service = new AccountService();
 
-        switch (status.getWorkName()) {
+        switch (status.getWorkTag()) {
             case MANAGE_ACCOUNTS -> {
                 ArrayList<Account> accountList;
                 try {
@@ -119,7 +119,7 @@ public class Service {
         TradeService service = new TradeService();
         Trade trade;
 
-        switch (status.getWorkName()) {
+        switch (status.getWorkTag()) {
 
             case ACCOUNT_HISTORY -> {
                 ArrayList<Trade> tradeList;
@@ -135,12 +135,13 @@ public class Service {
                 AccountService accountService = new AccountService();
                 ArrayList<Account> accountList = new ArrayList<>();
 
-                if (status.getWorkName().equals(Tag.DEPOSIT)) {
+                System.out.println(status.toString());
+                if (status.getWorkTag().equals(Tag.DEPOSIT) && !status.getData().equals(Tag.MY_ACCOUNT.getTag())) {
                     status = Pages.checkDepoistToOtherPage(status);
                 }
 
-                if (status.getWorkName().equals(Tag.WITHDRAW) ||
-                    (status.getWorkName().equals(Tag.DEPOSIT) && status.getData().equals("my_account"))){
+                if (status.getWorkTag().equals(Tag.WITHDRAW) ||
+                    (status.getWorkTag().equals(Tag.DEPOSIT) && status.getData().equals(Tag.MY_ACCOUNT.getTag()))){
                     try {
                         accountList = accountService.selectMyAllAccount(status);
                     } catch (SQLException e) {

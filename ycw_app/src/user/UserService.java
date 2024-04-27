@@ -31,7 +31,7 @@ public class UserService {
             }
             status.setMessage(dao.insert(con, user));
             status.setUserId(Flow.OLD_GUEST.getFlow());
-            status.setWorkName(Tag.LOG_IN);
+            status.setWorkTag(Tag.LOG_IN);
         } finally {
             if(con!=null) con.close();
         }
@@ -51,9 +51,9 @@ public class UserService {
                 status.setUserId(userList.getFirst().getuserId());
                 status.setMessage(Message.INFO_SUCCESS_LOGIN.getMessage(userList.getFirst().getName()));
 
-                status.setWorkName(Tag.MAIN);
+                status.setWorkTag(Tag.MAIN);
             } else if (userList.isEmpty()){
-                status.setMessage(Message.ERROR_LOGIN_FAILED.getMessage());
+                status.setMessage(Message.ERROR_FAILED_LOGIN.getMessage());
             }
         } finally {
             if(con!=null) con.close();

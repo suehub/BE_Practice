@@ -1,6 +1,8 @@
 package trade;
 
 
+import controller.Message;
+import controller.Tag;
 import repository.Query;
 
 import java.sql.*;
@@ -16,7 +18,7 @@ public class TradeDao {
         try {
             String sql = Query.TRADE_INSERT.getQueryString();
             pstmt = con.prepareStatement(sql);
-            pstmt.setString(1, trade.getAction());
+            pstmt.setString(1, trade.getAction().getTag());
             pstmt.setString(2, trade.getRequestAccount());
             pstmt.setString(3, trade.getTargetAccount());
             pstmt.setInt(4, trade.getAmount());
@@ -24,9 +26,9 @@ public class TradeDao {
             pstmt.setInt(6, trade.getTarBalance());
             result = pstmt.execute(); // 성공시 false, 실패시 true
             if (!result) {
-                resultMessage = "[info] " + trade.getAction() + "을 진행합니다.";
+                resultMessage = Message.INFO_EXCUTE_TRADE.getMessage(trade.getAction().getTag());
             } else {
-                resultMessage = "[Error] 거래에 실패하였습니다.";
+                resultMessage = Message.ERROR_FAILED_TRADE.getMessage();
             }
         } finally {
             if(pstmt!=null) pstmt.close();
@@ -52,7 +54,17 @@ public class TradeDao {
                 String requestAccount = rs.getString(3);
                 String targetAccount = rs.getString(4);
                 int amount = rs.getInt(5);
-                tradeList.add(new Trade(tradeId, action, requestAccount, targetAccount, amount));
+
+                // action String 값에 따른 Tag 객체 값 설정
+                if (action.equals(Tag.ACTION_DEPOSIT.getTag())){
+                    action = Tag.ACTION_DEPOSIT.getTag().toUpperCase();
+                } else if (action.equals(Tag.ACTION_WITHDRAW.getTag())){
+                    action = Tag.ACTION_WITHDRAW.getTag().toUpperCase();
+                } else if (action.equals(Tag.ACTION_TRANSFER.getTag())){
+                    action = Tag.ACTION_TRANSFER.getTag().toUpperCase();
+                }
+
+                tradeList.add(new Trade(tradeId, Tag.valueOf(action), requestAccount, targetAccount, amount));
                 newSeq += 1;
             }
         } finally {

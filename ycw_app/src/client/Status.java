@@ -3,25 +3,23 @@ package client;
 import controller.Flow;
 import controller.Tag;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Status {
     private Flow workFlow;
-    private Tag workName;
+    private Tag workTag;
     private String message;
     private String userId;
-    private String data;
-
+    private Map<String, String> data;
 
 
     public Status() {
-        super();
-    }
-
-    public Status(Flow workflow) {
-        this.workFlow = workflow;
-        this.workName = Tag.LOG_IN;
-        this.message = "";
+        this.workFlow = Flow.RUN;
+        this.workTag = Tag.LOG_IN;
+        this.message = Tag.DEFAULT_DATA.getTag();
         this.userId = Flow.NEW_GUEST.getFlow();
-        this.data = "";
+        this.data = new HashMap<String, String>();
     }
 
     public Flow getWorkFlow() {
@@ -40,20 +38,36 @@ public class Status {
         this.userId = userId;
     }
 
-    public Tag getWorkName() {
-        return workName;
+    public Tag getWorkTag() {
+        return workTag;
     }
 
-    public void setWorkName(Tag workName) {
-        this.workName = workName;
+    public void setWorkTag(Tag workTag) {
+        this.workTag = workTag;
     }
 
-    public String getData() {
+    public Map<String, String> getData() {
         return data;
     }
 
-    public void setData(String data) {
+    public String getDataValue(String key) {
+        return data.get(key);
+    }
+
+    public void setData(Map<String, String> data){
         this.data = data;
+    }
+
+    public void setDataValue(Tag method, String key, String value) {
+        if (method.equals(Tag.PUT_DATA)) {
+            data.put(key, value);
+        } else if (method.equals(Tag.UPDATE_DATA)) {
+            data.replace(key, value);
+        }
+    }
+
+    public void deleteDataValue(String key) {
+        data.remove(key);
     }
 
     public String getMessage() {
@@ -69,7 +83,7 @@ public class Status {
         return "Status{" +
                 "workFlow='" + workFlow + '\'' +
                 ", userId='" + userId + '\'' +
-                ", workName='" + workName + '\'' +
+                ", workTag='" + workTag + '\'' +
                 ", data='" + data + '\'' +
                 ", message='" + message + '\'' +
                 '}';

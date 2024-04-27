@@ -5,6 +5,8 @@ import trade.Trade;
 import user.User;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 import controller.*;
@@ -12,6 +14,7 @@ import controller.*;
 public class Pages {
 
     static Scanner sc = new Scanner(System.in);
+    static Map<String, String> data = new HashMap<>();
 
     public static Status mainPage(Status status) {
         status.setWorkFlow(Flow.RUN);
@@ -31,15 +34,15 @@ public class Pages {
         System.out.print(page);
         workNum = sc.next();
         if (workNum.equals("1")) {
-            status.setWorkName(Tag.MY_PAGE);
+            status.setWorkTag(Tag.MY_PAGE);
         } else if (workNum.equals("2")) {
-            status.setWorkName(Tag.MANAGE_ACCOUNTS);
+            status.setWorkTag(Tag.MANAGE_ACCOUNTS);
         } else if (workNum.equals("3")) {
-            status.setWorkName(Tag.DEPOSIT);
+            status.setWorkTag(Tag.DEPOSIT);
         } else if (workNum.equals("4")) {
-            status.setWorkName(Tag.WITHDRAW);
+            status.setWorkTag(Tag.WITHDRAW);
         } else if (workNum.equals("5")) {
-            status.setWorkName(Tag.TRANSFER);
+            status.setWorkTag(Tag.TRANSFER);
         } else {
             status.setMessage(Message.ERROR_WRONG_INPUT.getMessage());
         }
@@ -68,7 +71,7 @@ public class Pages {
             status.setUserId(Flow.OLD_GUEST.getFlow());
         } else if (workNum.equals("2")){
             status.setMessage(Message.INFO_EXCUTE_SIGNUP.getMessage());
-            status.setWorkName(Tag.SIGN_UP);
+            status.setWorkTag(Tag.SIGN_UP);
         } else {
             status.setMessage(Message.ERROR_WRONG_INPUT.getMessage());
         }
@@ -79,7 +82,7 @@ public class Pages {
 
     public static User loginPage() {
         User user = new User();
-        String page, workNum;
+        String page;
 
         page = "----------------------------------\n";
         page += "              log-in\n";
@@ -123,14 +126,14 @@ public class Pages {
         page += " ID: " + user.getuserId() + "\n";
         page += " 이름: " + user.getName();
         System.out.println(page);
-        status.setWorkName(Tag.MAIN);
+        status.setWorkTag(Tag.MAIN);
         status.setWorkFlow(Flow.CONTINUE);
 
         return status;
     }
 
     public static Status manageAccountPage(Status status, ArrayList<Account> accountList) {
-        String page, workNum;
+        String page, workNum, account_owner;
 
         page = "----------------------------------\n";
         page += "        나의 계좌 내역 (" + accountList.size() +")\n";
@@ -156,10 +159,17 @@ public class Pages {
         }
         page += "----------------------------------\n";
         page += " 수행할 작업을 입력하세요.\n";
-        page += "  1. 계좌 개설\n";
-        if (!accountList.isEmpty()) {
-            page += "  2. 거래내역 조회\n";
-            page += "  3. 계좌 해지\n";
+        if (accountList.isEmpty()){
+            page += "  1. 계좌 개설\n";
+        } else if (!accountList.isEmpty()) {
+            page += "  1. 입금\n";
+            page += "  2. 출금\n";
+            page += "  3. 송금\n";
+            page += "  4. 거래내역 조회\n";
+            page += "  5. 계좌 개설\n";
+            page += "  6. 계좌 해지\n";
+        } else {
+            page += "[Error] 오류가 발생했습니다!";
         }
         page += "  0. 뒤로가기\n";
         page += "----------------------------------\n";
@@ -167,24 +177,56 @@ public class Pages {
         System.out.print(page);
         workNum = sc.next();
         if (workNum.equals("0")) {
-            status.setWorkName(Tag.MAIN);
-        }
-        else if (workNum.equals("1")) {
-            status.setWorkName(Tag.OPEN_ACCOUNT);
-        } else if (workNum.equals("2")) {
+            status.setWorkTag(Tag.MAIN);
+        } else if (accountList.isEmpty() && workNum.equals("1")
+                   || !accountList.isEmpty() && workNum.equals("5")) {
+            status.setWorkTag(Tag.OPEN_ACCOUNT);
+        } else if (!accountList.isEmpty() && (workNum.equals("1") || workNum.equals("2") || workNum.equals("3"))) {
+            String action = "";
+            switch (workNum){
+                case "1" -> { status.setWorkTag(Tag.DEPOSIT);
+                              account_owner = Tag.MY_ACCOUNT.getTag();
+                              data = status.getData();
+                              data.put("account_owner",account_owner);
+                              status.setData(data);
+                              action = Tag.ACTION_DEPOSIT.getTag();
+                            }
+                case "2" -> { status.setWorkTag(Tag.WITHDRAW);
+                              action = Tag.ACTION_WITHDRAW.getTag();
+
+                            }
+                case "3" -> { status.setWorkTag(Tag.TRANSFER);
+                              action = Tag.ACTION_TRANSFER.getTag();
+                            }
+            }
+            page += "     " + action + "할 계좌의 번호(No)를 선택하세요.\n";
+            page += "  0. 뒤로가기\n";
+            page += "----------------------------------\n";
+            page += "[input] ";
+            System.out.print(page);
+            workNum = sc.next();
+            if (workNum.equals("0")) {
+                status.setWorkTag(Tag.MANAGE_ACCOUNTS);
+                status.setMessage(Message.INFO_CANCLE_TRADE.getMessage(action));
+                return status;
+            } else if (isNumberOnly(workNum)) {
+
+                status.setData(accountList.get(Integer.parseInt(workNum)-1).getaccountNum());
+            }
+        } else if (!accountList.isEmpty() && workNum.equals("4")) {
             System.out.println("----------------------------------");
             System.out.println(" 조회할 계좌의 번호(No)를 선택 하세요.");
             System.out.println("----------------------------------");
             System.out.print("[input] ");
             status.setData(accountList.get(sc.nextInt()-1).getaccountNum());
-            status.setWorkName(Tag.ACCOUNT_HISTORY);
-        } else if (workNum.equals("3")) {
+            status.setWorkTag(Tag.ACCOUNT_HISTORY);
+        } else if (!accountList.isEmpty() && workNum.equals("6")) {
             System.out.println("----------------------------------");
             System.out.println(" 해지할 계좌의 번호(No)를 선택 하세요.");
             System.out.println("----------------------------------");
             System.out.print("[input] ");
             status.setData(accountList.get(sc.nextInt()-1).getaccountNum());
-            status.setWorkName(Tag.CLOSE_ACCOUNT);
+            status.setWorkTag(Tag.CLOSE_ACCOUNT);
         } else {
             status.setMessage(Message.ERROR_WRONG_INPUT.getMessage());
         }
@@ -224,7 +266,7 @@ public class Pages {
         }
         page += "----------------------------------\n";
         System.out.println(page);
-        status.setWorkName(Tag.MANAGE_ACCOUNTS);
+        status.setWorkTag(Tag.MANAGE_ACCOUNTS);
         status.setWorkFlow(Flow.CONTINUE);
 
         return status;
@@ -244,7 +286,7 @@ public class Pages {
         workNum = sc.next();
         if (workNum.equals("0")) {
             status.setMessage(Message.INFO_CANCLE_CLOSE_ACCOUNT.getMessage());
-            status.setWorkName(Tag.MANAGE_ACCOUNTS);
+            status.setWorkTag(Tag.MANAGE_ACCOUNTS);
         } else {
             status.setMessage(Message.ERROR_WRONG_INPUT.getMessage());
         }
@@ -270,7 +312,7 @@ public class Pages {
         workNum = sc.next();
         if (workNum.equals("0")) {
             status.setMessage(Message.INFO_CANCLE_OPEN_ACCOUNT.getMessage());
-            status.setWorkName(Tag.MANAGE_ACCOUNTS);
+            status.setWorkTag(Tag.MANAGE_ACCOUNTS);
         } else if (workNum.equals("1")) {
             status.setData(Tag.DEPOSIT_ACCOUNT.getTag());
         } else if (workNum.equals("2")) {
@@ -311,19 +353,19 @@ public class Pages {
 
 
     public static Status selectAccountPage(Status status, ArrayList<Account> accountList) {
-        String page, workNum, work;
-        work = "";
+        String page, workNum, action;
+        action = "";
 
-        if (status.getWorkName().equals(Tag.DEPOSIT)) {
-            work = "입금";
-        } else if (status.getWorkName().equals(Tag.WITHDRAW)) {
-            work = "출금";
-        } else if (status.getWorkName().equals(Tag.TRANSFER)) {
-            work = "송금";
+        if (status.getWorkTag().equals(Tag.DEPOSIT)) {
+            action = Tag.ACTION_DEPOSIT.getTag();
+        } else if (status.getWorkTag().equals(Tag.WITHDRAW)) {
+            action = Tag.ACTION_WITHDRAW.getTag();
+        } else if (status.getWorkTag().equals(Tag.TRANSFER)) {
+            action = Tag.ACTION_TRANSFER.getTag();
         }
 
         page = "----------------------------------\n";
-        page += "        " + work + "할 내 계좌 선택 \n";
+        page += "        " + action + "할 내 계좌 선택 \n";
         page += "----------------------------------\n";
         if (accountList.isEmpty()) {
             page += " 보유한 계좌가 없습니다.\n";
@@ -347,7 +389,7 @@ public class Pages {
         page += "----------------------------------\n";
 
         if (!accountList.isEmpty()) {
-            page += "     " + work + "할 계좌의 번호(No)를 선택하세요.\n";
+            page += "     " + action+ "할 계좌의 번호(No)를 선택하세요.\n";
             page += "  0. 뒤로가기\n";
             page += "----------------------------------\n";
             page += "[input] ";
@@ -355,8 +397,8 @@ public class Pages {
             workNum = sc.next();
 
             if (workNum.equals("0")) {
-                status.setWorkName(Tag.MAIN);
-                status.setMessage("[Info] " + work + "을 취소합니다.");
+                status.setWorkTag(Tag.MAIN);
+                status.setMessage(Message.INFO_CANCLE_TRADE.getMessage(action));
                 return status;
             } else if (isNumberOnly(workNum)) {
                 status.setData(accountList.get(Integer.parseInt(workNum)-1).getaccountNum());
@@ -371,12 +413,12 @@ public class Pages {
             System.out.print(page);
             workNum = sc.next();
             if (workNum.equals("1")) {
-                status.setWorkName(Tag.OPEN_ACCOUNT);
+                status.setWorkTag(Tag.OPEN_ACCOUNT);
             } else if (workNum.equals("2")) {
-                status.setMessage("[Info] 작업을 취소합니다.");
-                status.setWorkName(Tag.MAIN);
+                status.setMessage(Message.INFO_CANCLE_OPEN_ACCOUNT.getMessage());
+                status.setWorkTag(Tag.MAIN);
             } else {
-                status.setMessage("[Error] 1. ~ 2. 사이로 입력해주세요");
+                status.setMessage(Message.ERROR_WRONG_INPUT.getMessage());
             }
         }
         System.out.println("----------------------------------");
@@ -387,10 +429,10 @@ public class Pages {
     public static Trade inputTradeInfo(Status status) {
         Trade trade = new Trade();
 
-        switch (status.getWorkName()) {
-            case DEPOSIT -> trade.setAction("입금");
-            case WITHDRAW -> trade.setAction("출금");
-            case TRANSFER -> trade.setAction("송금");
+        switch (status.getWorkTag()) {
+            case DEPOSIT -> trade.setAction(Tag.ACTION_DEPOSIT);
+            case WITHDRAW -> trade.setAction(Tag.ACTION_WITHDRAW);
+            case TRANSFER -> trade.setAction(Tag.ACTION_TRANSFER);
         }
 
         System.out.println("----------------------------------");
@@ -398,16 +440,16 @@ public class Pages {
         System.out.println("----------------------------------");
 
         switch (trade.getAction()) {
-            case "입금", "출금" -> {
-                trade.setRequestAccount("-");
-                if (trade.getAction().equals("입금") && status.getData().equals(Tag.OTHER_ACCOUNT.getTag())){
+            case ACTION_DEPOSIT, ACTION_WITHDRAW  -> {
+                trade.setRequestAccount(Tag.DEFAULT_ACCOUNT.getTag());
+                if (trade.getAction() == Tag.ACTION_DEPOSIT && status.getData().equals(Tag.OTHER_ACCOUNT)) {
                     System.out.print("입금 계좌: ");
                     trade.setTargetAccount(sc.next());
                 } else {
                     trade.setTargetAccount(status.getData());
                 }
             }
-            case "송금" -> {
+            case ACTION_TRANSFER -> {
                 trade.setRequestAccount(status.getData());
                 System.out.print("받는 계좌: ");
                 trade.setTargetAccount(sc.next());
@@ -422,9 +464,9 @@ public class Pages {
 
 
     public static void printMessage (Status status) {
-        if (!status.getMessage().equals("")) {
+        if (!status.getMessage().equals(Tag.DEFAULT_DATA.getTag())) {
             System.out.println(status.getMessage());
-            status.setMessage("");
+            status.setMessage(Tag.DEFAULT_DATA.getTag());
         }
     }
 

@@ -7,6 +7,7 @@ public enum Flow {
     RUN(() -> "run"),
     STOP(() -> "stop"),
     CONTINUE(() -> "continue"),
+    GUEST(() -> "guest"),
     NEW_GUEST(() -> "non_signed_guest"),
     OLD_GUEST(() -> "signed_guest");
 
