@@ -16,7 +16,7 @@ public class UserService {
   }
 
   private Banker bankerConvertToEntity(Banker bankerDto) {
-    return new Banker(bankerDto.name(), bankerDto.password(), bankerDto.authentication());
+    return new Banker(bankerDto.banker_uuid(),bankerDto.banker_name(), bankerDto.banker_password(), bankerDto.authentication());
   }
 
   public void processCustomer(Customer customerDto){
@@ -26,7 +26,7 @@ public class UserService {
   }
 
   private Customer customerConvertToEntity(Customer customerDto ) {
-    return new Customer(customerDto.name(), customerDto.password(), customerDto.role());
+    return new Customer(customerDto.customer_uuid(), customerDto.customer_name(), customerDto.customer_password());
   }
 
 }

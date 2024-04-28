@@ -21,25 +21,27 @@ import org.mockito.Mockito;
 
 
 class MockUserModelTest {
-  private MockUser mockUser;
+  private User mockUser;
+
+  @InjectMocks
+  private UUIDGenerator uuidGenerator;
+
   @Getter
   @Setter
-  static class MockUser {
+  static class User {
     String name;
     String password;
     byte[] passwordBytes;
     byte[] uuidBytes;
-    public MockUser(String name, String password){
+    public User(String name, String password){
       this.name = name;
       this.password = password;
     }
   }
-  @InjectMocks
-  PasswordEncryption passwordEncryption;
 
   @BeforeEach
   void setUp() {
-    this.mockUser = new MockUser("test", "verifiedPassword");
+    this.mockUser = new User("test", "verifiedPassword");
   }
 
 
@@ -53,12 +55,14 @@ class MockUserModelTest {
     Mockito.when(mockPstmt.executeUpdate()).thenReturn(1);
 
     // 테스트 실행
-    BankerRegistrationServiceTest bankerRegistrationService = new BankerRegistrationServiceTest(mockConn);
-    bankerRegistrationService.register(mockUser);
+    BankerRegistrationService bankerRegistrationService = new BankerRegistrationService(mockConn);
+    bankerRegistrationService.register((community.server.domain.user.User) mockUser);
 
     // 검증 , 랜덤 바이트 추가는 모킹이 불가능
+    Mockito.verify(mockPstmt).setBytes(1, uuidGenerator.getUuid());
     Mockito.verify(mockPstmt).setString(2, mockUser.name);
-    Mockito.verify(mockPstmt).setBoolean(4, false);
+    Mockito.verify(mockPstmt).setBytes(3, PasswordEncryption.hashPassword(mockUser.password));
+    Mockito.verify(mockPstmt).setBoolean(4, true);
     Mockito.verify(mockPstmt).setNull(5, Types.TIMESTAMP);
     Mockito.verify(mockPstmt).executeUpdate();
   }
@@ -78,7 +82,7 @@ class MockUserModelTest {
       rs = ps.executeQuery();
       if(rs.next()){
         byte[] returnPassword = rs.getBytes("password");
-        if(passwordEncryption.verifyPassword(returnPassword, password)){
+        if(PasswordEncryption.verifyPassword(returnPassword, password)){
           System.out.println("Login successful");
         }else{
           System.out.println("Login failed");

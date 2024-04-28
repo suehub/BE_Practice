@@ -2,7 +2,6 @@ package community.server.domain;
 
 
 import community.server.domain.account.AccountDeposit;
-import community.server.security.PasswordEncryption;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -14,7 +13,8 @@ import org.assertj.core.api.*;
 class AccountDepositTest {
   private final ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
 
-  private PasswordEncryption passwordEncryption;
+  AccountDepositTest() {
+  }
 
   @Test
   @DisplayName("Test Account Exists")
