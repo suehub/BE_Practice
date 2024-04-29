@@ -14,7 +14,6 @@ import controller.*;
 public class Pages {
 
     static Scanner sc = new Scanner(System.in);
-    static Map<String, String> data = new HashMap<>();
 
     public static Status mainPage(Status status) {
         status.setWorkFlow(Flow.RUN);
@@ -185,10 +184,7 @@ public class Pages {
             String action = "";
             switch (workNum){
                 case "1" -> { status.setWorkTag(Tag.DEPOSIT);
-                              account_owner = Tag.MY_ACCOUNT.getTag();
-                              data = status.getData();
-                              data.put("account_owner",account_owner);
-                              status.setData(data);
+                              status.setDataValue(Tag.PUT_DATA,Tag.A, Tag.MY_ACCOUNT.getTag());
                               action = Tag.ACTION_DEPOSIT.getTag();
                             }
                 case "2" -> { status.setWorkTag(Tag.WITHDRAW);
@@ -210,7 +206,6 @@ public class Pages {
                 status.setMessage(Message.INFO_CANCLE_TRADE.getMessage(action));
                 return status;
             } else if (isNumberOnly(workNum)) {
-
                 status.setData(accountList.get(Integer.parseInt(workNum)-1).getaccountNum());
             }
         } else if (!accountList.isEmpty() && workNum.equals("4")) {

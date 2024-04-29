@@ -13,7 +13,7 @@ public class DriverConnector {
 
     public DriverConnector() {
         this.driver = "com.mysql.cj.jdbc.Driver";
-        this.url = "practice-mysql.cvdyoyfefnzk.ap-northeast-2.rds.amazonaws.com";
+        this.url = "bepractice-db.cnyc406m4kh6.ap-northeast-2.rds.amazonaws.com";
         this.database = "practice_db";
         this.userName = "admin";
         this.password = "Ucheol92!4";

@@ -25,6 +25,7 @@ public enum Tag {
     // Tags for Status Object
     DEFAULT_DATA(() -> ""),
     PUT_DATA(() -> "put_data"),
+    ACCOUNT_OWNER(() -> "account_owner"),
     UPDATE_DATA(() -> "update_data"),
     MY_ACCOUNT(() -> "my_account"),
     OTHER_ACCOUNT(() -> "other_account"),
