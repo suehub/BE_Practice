@@ -3,7 +3,7 @@ package bank;
 import java.util.Scanner;
 
 /**
- * Account Manager 2 3
+ * Account Manager 1
  */
 public class AccountMgr {
     // 클래스 변수
