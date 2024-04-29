@@ -2,6 +2,9 @@ package bank;
 
 import java.util.Scanner;
 
+/**
+ * Account Manager
+ */
 public class AccountMgr {
     // 클래스 변수
     static Account[] accounts = new Account[100];
