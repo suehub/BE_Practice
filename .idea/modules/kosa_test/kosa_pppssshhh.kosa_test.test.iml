@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module external.linked.project.id="kosa_pppssshhh:test" external.linked.project.path="$MODULE_DIR$/../../kosa_pppssshhh" external.root.project.path="$MODULE_DIR$/../../kosa_pppssshhh" external.system.id="GRADLE" external.system.module.group="org.study" external.system.module.type="sourceSet" external.system.module.version="1.0-SNAPSHOT" type="JAVA_MODULE" version="4">
+<module external.linked.project.id=":kosa_test:test" external.linked.project.path="$MODULE_DIR$/../../../kosa_pppssshhh/kosa_test" external.root.project.path="$MODULE_DIR$/../../../kosa_pppssshhh" external.system.id="GRADLE" external.system.module.group="org.study" external.system.module.type="sourceSet" external.system.module.version="1.0-SNAPSHOT" type="JAVA_MODULE" version="4">
   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_17">
-    <output-test url="file://$MODULE_DIR$/../../kosa_pppssshhh/build/classes/java/test" />
+    <output-test url="file://$MODULE_DIR$/../../../kosa_pppssshhh/kosa_test/build/classes/java/test" />
     <exclude-output />
-    <content url="file://$MODULE_DIR$/../../kosa_pppssshhh/src/test">
-      <sourceFolder url="file://$MODULE_DIR$/../../kosa_pppssshhh/src/test/java" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/../../kosa_pppssshhh/src/test/resources" type="java-test-resource" />
+    <content url="file://$MODULE_DIR$/../../../kosa_pppssshhh/kosa_test/src/test">
+      <sourceFolder url="file://$MODULE_DIR$/../../../kosa_pppssshhh/kosa_test/src/test/java" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/../../../kosa_pppssshhh/kosa_test/src/test/resources" type="java-test-resource" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="kosa_pppssshhh.main" />
-    <orderEntry type="library" name="Gradle: mysql:mysql-connector-java:8.0.30" level="project" />
+    <orderEntry type="module" module-name="kosa_pppssshhh.kosa_test.main" />
     <orderEntry type="library" name="Gradle: org.junit.jupiter:junit-jupiter:5.10.0" level="project" />
-    <orderEntry type="library" name="Gradle: com.google.protobuf:protobuf-java:3.19.4" level="project" />
     <orderEntry type="library" name="Gradle: org.junit.jupiter:junit-jupiter-params:5.10.0" level="project" />
     <orderEntry type="library" name="Gradle: org.junit.jupiter:junit-jupiter-api:5.10.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Gradle: org.apiguardian:apiguardian-api:1.1.2" level="project" />
@@ -21,5 +19,5 @@
     <orderEntry type="library" scope="RUNTIME" name="Gradle: org.junit.jupiter:junit-jupiter-engine:5.10.0" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Gradle: org.junit.platform:junit-platform-engine:1.10.0" level="project" />
   </component>
-  <component name="TestModuleProperties" production-module="kosa_pppssshhh.main" />
+  <component name="TestModuleProperties" production-module="kosa_pppssshhh.kosa_test.main" />
 </module>
