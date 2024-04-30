@@ -1,6 +1,5 @@
 package src.service;
 
-import src.Exception.GlobalException;
 import src.db.JdbcConnection;
 
 import java.sql.Connection;
@@ -8,6 +7,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Scanner;
+
+import static src.service.AccountService.log;
 
 public class HistoryService {
 
@@ -29,7 +30,7 @@ public class HistoryService {
             }
         }catch(Exception e) {
             System.out.println("없는 계좌입니다.");
-            GlobalException.log(e);
+            log.severe("없는 계좌");
         }
     }
 }

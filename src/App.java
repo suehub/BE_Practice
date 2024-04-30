@@ -1,15 +1,15 @@
 
 package src;
 
-import src.Exception.GlobalException;
 import src.service.AccountService;
 import src.service.HistoryService;
 import src.service.UserService;
 
 import java.sql.*;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
-import java.util.logging.Logger;
+import static src.Exception.GlobalException.log;
 
 public class App {
     static Scanner scanner = new Scanner(System.in);
@@ -23,17 +23,26 @@ public class App {
 
     public static void bankService() throws SQLException { //앱 실행 함수
         screen.menuId();
-        String choice = scanner.next();
-        if (choice.equals("1")) { // 1. 회원 가입
+//        String choice = scanner.next();
+
+        char[] choice = scanner.next().toCharArray();
+
+
+
+        if (choice[0] == '1') { // 1. 회원 가입
+            Arrays.fill(choice, (char)0x20);
             UserService.createUser(scanner);
             bankService();
-        } else if (choice.equals("2")) { // 2. 로그인
+        } else if (choice[0] == '2') { // 2. 로그인
+            Arrays.fill(choice, (char)0x20);
             login();
             bankFunction(userId);//기능 선택 함수
 
-        } else if (choice.equals("3")) {
+        } else if (choice[0] == '3') {
+            Arrays.fill(choice, (char)0x20);
             System.out.println("프로그램을 종료합니다.");
         } else {
+            Arrays.fill(choice, (char)0x20);
             System.out.println("잘못 입력하셨습니다.");
             bankService();
         }
@@ -53,26 +62,34 @@ public class App {
 
     public static void bankFunction(String userId) throws SQLException { //은행 기능 함수
         screen.menu();
-        String choice= scanner.next();
+//        String choice= scanner.next();
 
-        switch (choice) {
+        char[] choice = scanner.next().toCharArray();
 
-            case "1": // 계좌 관련 기능
+
+        switch (choice[0]) {
+
+            case '1': // 계좌 관련 기능
+                Arrays.fill(choice, (char)0x20);
                 accountService();
                 break;
-            case "2": // 입출금 기능
+            case '2': // 입출금 기능
+                Arrays.fill(choice, (char)0x20);
                 moneyService();
                 break;
-            case "3":
+            case '3':
+                Arrays.fill(choice, (char)0x20);
                 System.out.println("로그아웃합니다.");
                 bankService();
                 break;
 
-            case "0":
+            case '0':
+                Arrays.fill(choice, (char)0x20);
                 System.out.println("프로그램을 종료합니다.");
                 return;
 
             default:
+                Arrays.fill(choice, (char)0x20);
                 System.out.println("잘못된 입력입니다. 다시 입력해주세요.");
                 bankFunction(userId);
         }
@@ -80,18 +97,25 @@ public class App {
 
     public static void accountService() throws SQLException {//계좌 생성 및 조회 기능
         screen.login();
-        String login_num = scanner.next();
-        if (login_num.equals("1")) {//계좌 생성
+//        String login_num = scanner.next();
+
+        char[] choice = scanner.next().toCharArray();
+
+        if (choice[0] == '1') {//계좌 생성
+            Arrays.fill(choice, (char)0x20);
             AccountService.createAccount(userId);
             bankFunction(userId);
 
-        } else if (login_num.equals("2")) {//계좌 조회
+        } else if (choice[0] == '2') {//계좌 조회
+            Arrays.fill(choice, (char)0x20);
             accounts = AccountService.findAll(userId);
             useAccount();
 
-        } else if (login_num.equals("3")) {
+        } else if (choice[0] == '3') {
+            Arrays.fill(choice, (char)0x20);
             bankFunction(userId);
         } else {
+            Arrays.fill(choice, (char)0x20);
             System.out.println("잘못 입력하셨습니다.");
             bankFunction(userId);
         }
@@ -101,14 +125,15 @@ public class App {
         int account_num;
         if (scanner.hasNextInt()) {
             account_num = scanner.nextInt();
+            scanner.nextLine();
             if (accounts.size() < account_num || account_num < 0) {
                 System.out.println("잘못 입력하셨습니다.");
-                choiceAccount();
+                return choiceAccount();
             }
             return account_num;
         }
         System.out.println("정수를 입력해주세요.");
-        scanner.next();
+        scanner.nextLine();
         return choiceAccount();
     }
 
@@ -126,7 +151,11 @@ public class App {
                 useAccountFunction(account_num, selectAccount);
                 bankFunction(userId);
             }catch (Exception e){
-                GlobalException.log(e);
+//                GlobalException.log(e);
+                System.out.println("잘못 입력하셨습니다.");
+                log.severe("잘못된 입력");
+
+
                 scanner.nextLine();
                 bankFunction(userId);
             }

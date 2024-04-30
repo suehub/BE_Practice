@@ -14,9 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.logging.Logger;
+
+import static src.Exception.GlobalException.log;
 
 public class AccountService {
-
+    final static Logger log = Logger.getGlobal();
     public static void createAccount(String userId) {
 
         Random random = new Random();
@@ -39,7 +42,7 @@ public class AccountService {
                     "생성된 계좌번호는 "+ accountId+" 입니다.");;
         } catch (Exception e) {
             System.out.println("없는 ID 입니다.");
-            GlobalException.log(e);
+            log.severe("없는 ID");
         }
     }
 
@@ -53,7 +56,7 @@ public class AccountService {
             System.out.println("계좌가 삭제되었습니다.");
         } catch (Exception e) {
             System.out.println("없는 계좌 입니다.");
-            GlobalException.log(e);
+            log.severe("없는 계좌");
         }
     }
 
@@ -80,7 +83,7 @@ public class AccountService {
             System.out.println("입금되었습니다.");
         } catch(Exception e) {
 //            System.out.println("없는 계좌");
-            GlobalException.log(e);
+            log.severe("DB 접근 에러");
         } finally {
             insertHistory(accountId, "입금", amount);
         }
@@ -94,7 +97,7 @@ public class AccountService {
             amount = scanner.nextInt();
 
         }catch (Exception e){
-            GlobalException.log(e);
+            log.severe("금액 문자 입력");
             scanner.nextLine();
         }
 
@@ -115,7 +118,7 @@ public class AccountService {
             pstmt.setString(2, accountId);
             pstmt.executeUpdate();
         } catch(Exception e) {
-            GlobalException.log(e);
+            log.severe("DB 접근 에러");
         }
         insertHistory(accountId, "출금", amount);
         return true;
@@ -134,10 +137,10 @@ public class AccountService {
                     throw new Exception("계좌가 존재하지 않습니다.");
                 }
             } catch(Exception e) {
-                GlobalException.log(e);
+                log.severe(e.getMessage());
             }
         }  catch(Exception e) {
-            GlobalException.log(e);
+            log.severe("DB 접근 에러");
         }
         return 0;
     }
@@ -163,7 +166,7 @@ public class AccountService {
             amount = scanner.nextInt();
 
         }catch (Exception e){
-            GlobalException.log(e);
+            log.severe("송금 금액 오류");
             scanner.nextLine();
         }
 
@@ -186,7 +189,7 @@ public class AccountService {
             insertHistory(fromAccountId, "송금", amount);
             insertHistory(toAccountId, "입금", amount);
         }  catch(Exception e) {
-            GlobalException.log(e);
+            log.severe("송금 에러");
         }
         return true;
     }
@@ -200,7 +203,7 @@ public class AccountService {
             pstmt.setString(2, toAccountId);
             pstmt.executeUpdate();
         } catch(Exception e) {
-            GlobalException.log(e);
+            log.severe("입금 에러");
         }
     }
 
@@ -214,7 +217,7 @@ public class AccountService {
             pstmt.setString(2, fromAccountId);
             pstmt.executeUpdate();
         } catch(Exception e) {
-            GlobalException.log(e);
+            log.severe("출금 에러");
         }
     }
 
@@ -231,7 +234,7 @@ public class AccountService {
             pstmt.setString(5, time);
             pstmt.executeUpdate();
         } catch(Exception e) {
-            GlobalException.log(e);
+            log.severe("입출금 내역 에러");
         }
     }
 
@@ -254,7 +257,7 @@ public class AccountService {
         } catch(SQLException se) {
             System.out.println("없는 계좌입니다.");
         }catch(Exception e) {
-            GlobalException.log(e);
+            log.severe("DB 접근 에러");
         }
         return list;
     }
@@ -276,7 +279,7 @@ public class AccountService {
         }catch(SQLException se) {
             System.out.println("없는 계좌입니다.");
         }catch(Exception e) {
-            GlobalException.log(e);
+            log.severe("DB 접근 에러");
         }
 
         return false;

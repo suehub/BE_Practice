@@ -1,6 +1,5 @@
 package src.service;
 
-import src.Exception.GlobalException;
 import src.db.JdbcConnection;
 import src.repository.UserRepository;
 
@@ -9,6 +8,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Scanner;
+
+import static src.Exception.GlobalException.log;
 
 public class UserService {
     public static void createUser(Scanner scanner) throws SQLException {
@@ -26,8 +27,9 @@ public class UserService {
             pstmt.executeUpdate();
             System.out.println("사용자가 생성되었습니다.");
         }catch(Exception e) {
-            System.out.println("이미 존재합니다");
-            GlobalException.log(e);
+            System.out.println("이미 존재하는 회원입니다.");
+            log.severe("이미 존재한 회원");
+//            GlobalException.logSevere("이미 존재한 회원");
         }
     }
 
@@ -45,7 +47,8 @@ public class UserService {
                  return false;
              }
         } catch(Exception e) {
-            GlobalException.log(e);
+            log.severe("DB 접근 에러");
+//            GlobalException.logSevere("DB 접근 에러");
             return false;
         }
     }
@@ -70,7 +73,8 @@ public class UserService {
                 return false;
             }
         } catch(Exception e) {
-            GlobalException.log(e);
+            log.severe("DB 접근 에러");
+//            GlobalException.logSevere("DB 접근 에러");
             return false;
         }
     }
