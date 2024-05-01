@@ -94,17 +94,17 @@ public class Main {
                         System.out.print("출금할 계좌 번호를 입력하세요: ");
                         String withdrawalAccountNumber = sc.next();
                         System.out.print("출금할 금액을 입력하세요: ");
-                        double withdrawAmount = sc.nextDouble();
-                        accountManager.withdrawal(member.getId(), withdrawalAccountNumber, withdrawAmount);
+                        double withdrawalAmount = sc.nextDouble();
+                        accountManager.withdrawal(member.getId(), withdrawalAccountNumber, withdrawalAmount);
                         break;
                     case 4:
                         System.out.print("계좌 번호를 입력하세요: ");
-                        accountNumber = sc.next();
+                        withdrawalAccountNumber = sc.next();
                         System.out.print("송금할 계좌번호를 입력하세요: ");
-                        String transferAccountNumber = sc.next();
+                        String depositAccountNumber = sc.next();
                         System.out.print("금액을 입력하세요: ");
                         double transferAmount = sc.nextDouble();
-                        accountManager.transfer(accountNumber, transferAccountNumber, transferAmount);
+                        accountManager.transfer(withdrawalAccountNumber, depositAccountNumber, transferAmount);
                         break;
                     case 5:
                         System.out.print("이름을 입력하세요: ");

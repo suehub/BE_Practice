@@ -7,9 +7,6 @@ import java.util.Random;
 
 import static java.lang.System.getenv;
 
-/**
- * ....
- */
 public class AccountManager {
     static Map<String, String> env = getenv();
     private static final String URL = "jdbc:mysql://localhost:3306/javabank";
@@ -38,38 +35,6 @@ public class AccountManager {
 
         return accountLists; // 계좌 목록 반환
     }
-//        ResultSet resultSet = null; // ResultSet 선언
-//        try (Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD)) {
-//            // 잔액 조회
-//            double balance = checkBalance(connection, accountNumber);
-//            if (balance >= 0) {
-//                System.out.printf("계좌 잔액: %.0f원 \n", balance);
-
-//                // 최근 내역 조회
-//                resultSet = getRecentTransactions(connection, accountNumber);
-//                if (resultSet != null) {
-//                    System.out.println("최근 내역:");
-//                    while (resultSet.next()) {
-//                        String transactionType = resultSet.getString("transaction_type");
-//                        double amount = resultSet.getDouble("transaction_amount"); // 수정된 부분
-//                        System.out.println("거래 유형: " + transactionType + ", 금액: " + amount);
-//                    }
-//                }
-//            }
-//        } catch (SQLException e) {
-//            e.getStackTrace();
-//        }
-//        finally {
-//            // ResultSet이 null이 아니라면 닫기
-//            if (resultSet != null) {
-//                try {
-//                    resultSet.close();
-//                } catch (SQLException e) {
-//                    e.getStackTrace();
-//                }
-//            }
-//        }
-
 
     // 잔액 조회 기능
     public double checkBalance(Connection connection, String accountNumber) {
@@ -88,16 +53,6 @@ public class AccountManager {
             return -1; // 오류 반한
         }
     }
-
-//    private ResultSet getRecentTransactions(Connection connection, String accountNumber) throws SQLException {
-//        String sql = "SELECT transaction_type, transaction_amount FROM transactions WHERE account_number = ? ORDER BY transaction_date DESC LIMIT 10";
-//        PreparedStatement statement = connection.prepareStatement(sql);
-//        statement.setString(1, accountNumber);
-//        ResultSet resultSet = statement.executeQuery();
-//
-//        statement.close();
-//        return resultSet;
-//    }
 
     // 입금 기능
     public void deposit(String id, String accountNumber, double amount) {
@@ -164,30 +119,67 @@ public class AccountManager {
     }
 
     // 계좌 송금
-    public void transfer(String userAccountNumber, String transferAccountNumber, double amount) {
-        try (Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-             PreparedStatement statement = connection.prepareStatement("UPDATE accounts SET balance = balance - ? WHERE account_number = ?");
-             PreparedStatement statement2 = connection.prepareStatement("UPDATE accounts SET balance = balance + ? WHERE account_number = ?")) {
-            statement.setDouble(1, amount);
-            statement.setString(2, userAccountNumber);
-            statement2.setDouble(1, amount);
-            statement2.setString(2, transferAccountNumber);
+    public void transfer(String withdrawalAccount, String depositAccount, double amount) {
+        Connection connection = null;
+        try {
+            connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+            connection.setAutoCommit(false); // 트랜잭션 시작
 
-            int rowsUpdated = statement.executeUpdate();
-            if (rowsUpdated > 0) {
-                System.out.println("송금이 완료되었습니다.");
-                double balance = checkBalance(connection, userAccountNumber);
-                if (balance >= 0) {
-                    System.out.printf("계좌 잔액: %.0f원 \n", balance);
+            // 송금자 계좌에서 출금
+            PreparedStatement withdrawStatement = connection.prepareStatement("UPDATE Accounts SET balance = balance - ? WHERE account_number = ?");
+            withdrawStatement.setDouble(1, amount);
+            withdrawStatement.setString(2, withdrawalAccount);
+            int withdrawRowsUpdated = withdrawStatement.executeUpdate();
+
+            // 수신자 계좌로 입금
+            PreparedStatement depositStatement = connection.prepareStatement("UPDATE Accounts SET balance = balance + ? WHERE account_number = ?");
+            depositStatement.setDouble(1, amount);
+            depositStatement.setString(2, depositAccount);
+            int depositRowsUpdated = depositStatement.executeUpdate();
+
+            // Transaction 테이블에 거래 내역 저장
+            if (withdrawRowsUpdated > 0 && depositRowsUpdated > 0) {
+                PreparedStatement transactionStatement = connection.prepareStatement("INSERT INTO Transactions (transaction_type, transaction_amount, transaction_date, deposit_account, withdrawal_account) VALUES (?, ?, NOW(), ?, ?)");
+                transactionStatement.setString(1, "transfer");
+                transactionStatement.setDouble(2, amount);
+                transactionStatement.setString(3, depositAccount);
+                transactionStatement.setString(4, withdrawalAccount);
+                int transactionRowsUpdated = transactionStatement.executeUpdate();
+
+                if (transactionRowsUpdated > 0) {
+                    connection.commit(); // 트랜잭션 성공적으로 완료
+                    System.out.println("송금이 완료되었습니다.");
+                    double transferBalance = checkBalance(connection, withdrawalAccount);
+                    if (transferBalance >= 0) {
+                        System.out.printf("송금 후 %s 계좌 잔액: %.0f원\n", withdrawalAccount, transferBalance);
+                    }
+                } else {
+                    throw new SQLException("거래 내역 저장에 실패했습니다.");
                 }
             } else {
-                System.out.println("송금에 실패했습니다.");
+                throw new SQLException("출금 또는 입금에 실패했습니다.");
             }
-
         } catch (SQLException e) {
-            e.getStackTrace();
+            try {
+                if (connection != null) {
+                    connection.rollback(); // 롤백
+                }
+            } catch (SQLException rollbackEx) {
+                rollbackEx.printStackTrace();
+            }
+            e.printStackTrace();
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.setAutoCommit(true); // 트랜잭션 종료
+                    connection.close();
+                }
+            } catch (SQLException closeEx) {
+                closeEx.printStackTrace();
+            }
         }
     }
+
 
     // 계좌 생성 기능
     public void createAccount(String userName) {
