@@ -3,12 +3,13 @@ package main;
 import accountManager.AccountManager;
 import member.Member;
 
+import java.sql.SQLException;
 import java.util.Map;
 import java.util.Scanner;
 
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
         Scanner sc = new Scanner(System.in);
         Member member = new Member();
         boolean isLogin = false;
@@ -60,7 +61,7 @@ public class Main {
 //                    }
                     break;
                 case 3:
-                    System.out.println("프로그램 종료");
+                    System.out.println("JAVABANK 종료");
                     System.exit(0);
                 default:
                     System.out.println("잘못 입력하셨습니다. 다시 입력해주세요");
@@ -72,7 +73,11 @@ public class Main {
                 int menu2 = getMenuChoice(sc);
                 switch(menu2) {
                     case 1:
-                        Map<String, Double> accountLists = accountManager.checkAccountDetails(member.getId());
+                        Map<String, Double> accountLists = accountManager.showAccounts(member.getId());
+                        if (accountLists.isEmpty()) {
+                            System.out.println("계좌 목록이 없습니다.");
+                            break;
+                        }
                         System.out.println(member.getName().trim() + "님의 계좌목록입니다.");
                         System.out.println("계좌번호\t\t\t\t\t\t잔액");
                         System.out.println("------------------------------------------------------");
@@ -84,41 +89,52 @@ public class Main {
                         }
                         break;
                     case 2:
-                        System.out.print("입금할 계좌 번호를 입력하세요: ");
+                        System.out.print("조회 계좌 번호: ");
                         String accountNumber = sc.next();
-                        System.out.print("입금할 금액을 입력하세요: ");
-                        double depositAmount = sc.nextDouble();
-                        accountManager.deposit(member.getId(), accountNumber, depositAmount);
+                        accountManager.checkAccountDetails(accountNumber);
                         break;
                     case 3:
-                        System.out.print("출금할 계좌 번호를 입력하세요: ");
-                        String withdrawalAccountNumber = sc.next();
-                        System.out.print("출금할 금액을 입력하세요: ");
-                        double withdrawalAmount = sc.nextDouble();
-                        accountManager.withdrawal(member.getId(), withdrawalAccountNumber, withdrawalAmount);
+                        System.out.print("입금 계좌 번호: ");
+                        accountNumber = sc.next();
+                        System.out.print("입금 금액: ");
+                        double depositAmount = sc.nextDouble();
+                        System.out.print("계좌 비밀번호: ");
+                        String accountPassword = sc.next();
+                        accountManager.deposit(member.getId(), accountNumber, depositAmount, accountPassword);
                         break;
                     case 4:
-                        System.out.print("계좌 번호를 입력하세요: ");
-                        withdrawalAccountNumber = sc.next();
-                        System.out.print("송금할 계좌번호를 입력하세요: ");
-                        String depositAccountNumber = sc.next();
-                        System.out.print("금액을 입력하세요: ");
-                        double transferAmount = sc.nextDouble();
-                        accountManager.transfer(withdrawalAccountNumber, depositAccountNumber, transferAmount);
+                        System.out.print("출금 계좌 번호: ");
+                        String withdrawalAccountNumber = sc.next();
+                        System.out.print("출금 금액: ");
+                        double withdrawalAmount = sc.nextDouble();
+                        System.out.print("계좌 비밀번호: ");
+                        accountPassword = sc.next();
+                        accountManager.withdrawal(member.getId(), withdrawalAccountNumber, withdrawalAmount, accountPassword);
                         break;
                     case 5:
-                        System.out.print("생성할 계좌 비밀번호를 입력하세요: ");
-                        String accountPassword = sc.next();
-                        accountManager.createAccount(member.getId(), accountPassword);
+                        System.out.print("계좌 번호: ");
+                        withdrawalAccountNumber = sc.next();
+                        System.out.print("송금할 계좌번호 입력: ");
+                        String depositAccountNumber = sc.next();
+                        System.out.print("금액 입력: ");
+                        double transferAmount = sc.nextDouble();
+                        System.out.print("계좌 비밀번호: ");
+                        accountPassword = sc.next();
+                        accountManager.transfer(withdrawalAccountNumber, depositAccountNumber, transferAmount, accountPassword);
                         break;
                     case 6:
-                        System.out.print("삭제할 계좌 번호를 입력하세요: ");
+                        System.out.print("생성 계좌 비밀번호 입력: ");
+                        accountPassword = sc.next();
+                        accountManager.createAccount(member.getId(), accountPassword);
+                        break;
+                    case 7:
+                        System.out.print("삭제 계좌 번호: ");
                         String deleteAccountNumber = sc.next();
-                        System.out.print("계좌 비밀번호를 입력하세요: ");
+                        System.out.print("계좌 비밀번호: ");
                         String deletePassword = sc.next();
                         accountManager.deleteAccount(deleteAccountNumber, deletePassword);
                         break;
-                    case 7 :
+                    case 8:
                         member = null;
                         isLogin = false;
                         System.out.println("로그아웃되었습니다.");
@@ -134,15 +150,15 @@ public class Main {
     }
 
     public static void startMenu() {
-        System.out.println("=====================================================");
+        System.out.println("=================================================================");
         System.out.println("1.로그인 2.회원가입 3.종료");
-        System.out.println("=====================================================");
+        System.out.println("=================================================================");
     }
 
     public static void printMenu() {
-        System.out.println("=======================================================");
-        System.out.println("1.계좌 목록 2.입금 3.출금 4.송금 5.계좌 생성 6.계좌 삭제 7.로그아웃");
-        System.out.println("=======================================================");
+        System.out.println("=================================================================");
+        System.out.println("1.계좌 목록 2.계좌 조회 3.입금 4.출금 5.송금 6.계좌 생성 7.계좌 삭제 8.로그아웃");
+        System.out.println("=================================================================");
     }
 
     public static int getMenuChoice(Scanner sc) {
