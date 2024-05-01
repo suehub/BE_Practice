@@ -182,19 +182,21 @@ public class AccountManager {
 
 
     // 계좌 생성 기능
-    public void createAccount(String userName) {
+    public void createAccount(String userId, String accountPassword) {
         Random rand = new Random();
-        int accountNumber = rand.nextInt(1000000000);
+        long accountNumber = rand.nextLong(9000000000L) + 1000000000L;
 
         try (Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-             PreparedStatement statement = connection.prepareStatement("INSERT INTO accounts(account_number, balance, user_id) VALUES (?, ?, 0)")) {
+             PreparedStatement statement = connection.prepareStatement("INSERT INTO accounts(account_number, user_id, account_password) VALUES (?, ?, ?)")) {
             statement.setString(1, String.valueOf(accountNumber));
-            statement.setString(2, userName);
+            statement.setString(2, userId);
+            statement.setString(3, accountPassword);
+
 
             int rowsUpdated = statement.executeUpdate();
             if (rowsUpdated > 0) {
                 System.out.println("계좌가 생성되었습니다.");
-                System.out.println(userName + "님의 계좌번호는 " + accountNumber + "입니다.");
+                System.out.println(userId + "님의 계좌번호는 " + accountNumber + "입니다.");
             } else {
                 System.out.println("계좌 생성에 실패했습니다.");
             }
@@ -205,10 +207,12 @@ public class AccountManager {
     }
 
     // 계좌 삭제 기능
-    public void deleteAccount(String accountNumber) {
+    public void deleteAccount(String accountNumber, String accountPassword) {
         try (Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-             PreparedStatement statement = connection.prepareStatement("DELETE FROM accounts WHERE account_number = ?")) {
+             PreparedStatement statement = connection.prepareStatement("DELETE FROM accounts WHERE account_number = ? AND account_password = ?")) {
             statement.setString(1, accountNumber);
+            statement.setString(2, accountPassword);
+
 
             int rowsUpdated = statement.executeUpdate();
             if (rowsUpdated > 0) {

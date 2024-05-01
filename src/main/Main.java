@@ -80,7 +80,7 @@ public class Main {
                         for (Map.Entry<String, Double> entry : accountLists.entrySet()) {
                             String accountNumber = entry.getKey();
                             double balance = entry.getValue();
-                            System.out.printf("%s\t\t\t\t%,12.0f원\n", accountNumber, balance); // 오른쪽 정렬 및 금액 자릿수에 맞춰 출력
+                            System.out.printf("%s\t\t\t\t%,12.0f원\n", accountNumber, balance);
                         }
                         break;
                     case 2:
@@ -107,14 +107,16 @@ public class Main {
                         accountManager.transfer(withdrawalAccountNumber, depositAccountNumber, transferAmount);
                         break;
                     case 5:
-                        System.out.print("이름을 입력하세요: ");
-                        String userName = sc.next();
-                        accountManager.createAccount(userName);
+                        System.out.print("생성할 계좌 비밀번호를 입력하세요: ");
+                        String accountPassword = sc.next();
+                        accountManager.createAccount(member.getId(), accountPassword);
                         break;
                     case 6:
-                        System.out.print("계좌 번호를 입력하세요: ");
+                        System.out.print("삭제할 계좌 번호를 입력하세요: ");
                         String deleteAccountNumber = sc.next();
-                        accountManager.deleteAccount(deleteAccountNumber);
+                        System.out.print("계좌 비밀번호를 입력하세요: ");
+                        String deletePassword = sc.next();
+                        accountManager.deleteAccount(deleteAccountNumber, deletePassword);
                         break;
                     case 7 :
                         member = null;
