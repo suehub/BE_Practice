@@ -84,27 +84,27 @@ public class Main {
                         }
                         break;
                     case 2:
-                        System.out.print("계좌 번호를 입력하세요: ");
-                        String depositAccountNumber = sc.next();
+                        System.out.print("입금할 계좌 번호를 입력하세요: ");
+                        String accountNumber = sc.next();
                         System.out.print("입금할 금액을 입력하세요: ");
                         double depositAmount = sc.nextDouble();
-                        accountManager.deposit(member.getId(), depositAccountNumber, depositAmount);
+                        accountManager.deposit(member.getId(), accountNumber, depositAmount);
                         break;
                     case 3:
-                        System.out.print("계좌 번호를 입력하세요: ");
-                        String withdrawAccountNumber = sc.next();
+                        System.out.print("출금할 계좌 번호를 입력하세요: ");
+                        String withdrawalAccountNumber = sc.next();
                         System.out.print("출금할 금액을 입력하세요: ");
                         double withdrawAmount = sc.nextDouble();
-                        accountManager.withdraw(withdrawAccountNumber, withdrawAmount);
+                        accountManager.withdrawal(member.getId(), withdrawalAccountNumber, withdrawAmount);
                         break;
                     case 4:
                         System.out.print("계좌 번호를 입력하세요: ");
-                        String userAccountNumber = sc.next();
+                        accountNumber = sc.next();
                         System.out.print("송금할 계좌번호를 입력하세요: ");
                         String transferAccountNumber = sc.next();
                         System.out.print("금액을 입력하세요: ");
                         double transferAmount = sc.nextDouble();
-                        accountManager.transfer(userAccountNumber, transferAccountNumber, transferAmount);
+                        accountManager.transfer(accountNumber, transferAccountNumber, transferAmount);
                         break;
                     case 5:
                         System.out.print("이름을 입력하세요: ");

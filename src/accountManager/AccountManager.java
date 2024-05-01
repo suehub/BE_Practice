@@ -103,23 +103,26 @@ public class AccountManager {
     public void deposit(String id, String accountNumber, double amount) {
         try (Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
              PreparedStatement depositStatement = connection.prepareStatement("UPDATE Accounts SET balance = balance + ? WHERE account_number = ?");
-             PreparedStatement transactionStatement = connection.prepareStatement("INSERT INTO Transactions (transaction_type, transaction_amount, transaction_date, recipient_account) VALUES (?, ?, NOW(), ?)")) {
+             PreparedStatement transactionStatement = connection.prepareStatement("INSERT INTO Transactions (transaction_type, transaction_amount, transaction_date, deposit_account) VALUES (?, ?, NOW(), ?)")) {
             depositStatement.setDouble(1, amount);
             depositStatement.setString(2, accountNumber);
 
             int rowsUpdated = depositStatement.executeUpdate();
-            if (rowsUpdated > 0) {
+
+            // Transaction 테이블에 거래 내역 저장
+            transactionStatement.setString(1, "deposit");
+            transactionStatement.setDouble(2, amount);
+            transactionStatement.setString(3, accountNumber);
+
+            int transactionRowsUpdated = transactionStatement.executeUpdate();
+
+            if (rowsUpdated > 0 && transactionRowsUpdated > 0) {
                 System.out.println("입금이 완료되었습니다.");
                 double balance = checkBalance(connection, accountNumber);
                 if (balance >= 0) {
                     System.out.printf("계좌 잔액: %.0f원 \n", balance);
                 }
 
-                // Transaction 테이블에 거래 내역 저장
-                transactionStatement.setString(1, "입금");
-                transactionStatement.setDouble(2, amount);
-                transactionStatement.setString(3, accountNumber);
-                transactionStatement.executeUpdate();
             } else {
                 System.out.println("입금에 실패했습니다.");
             }
@@ -129,27 +132,35 @@ public class AccountManager {
     }
 
     // 출금 기능
-    public void withdraw(String accountNumber, double amount) {
+    public void withdrawal(String id, String accountNumber, double amount) {
         try (Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-             PreparedStatement statement = connection.prepareStatement("UPDATE accounts SET balance = balance - ? WHERE account_number = ?")) {
-            statement.setDouble(1, amount);
-            statement.setString(2, accountNumber);
+             PreparedStatement depositStatement = connection.prepareStatement("UPDATE Accounts SET balance = balance - ? WHERE account_number = ?");
+             PreparedStatement transactionStatement = connection.prepareStatement("INSERT INTO Transactions (transaction_type, transaction_amount, transaction_date, withdrawal_account) VALUES (?, ?, NOW(), ?)")) {
+            depositStatement.setDouble(1, amount);
+            depositStatement.setString(2, accountNumber);
 
-            int rowsUpdated = statement.executeUpdate();
-            if (rowsUpdated > 0) {
+            int rowsUpdated = depositStatement.executeUpdate();
+
+            // Transaction 테이블에 거래 내역 저장
+            transactionStatement.setString(1, "withdrawal");
+            transactionStatement.setDouble(2, amount);
+            transactionStatement.setString(3, accountNumber);
+
+            int transactionRowsUpdated = transactionStatement.executeUpdate();
+
+            if (rowsUpdated > 0 && transactionRowsUpdated > 0) {
                 System.out.println("출금이 완료되었습니다.");
                 double balance = checkBalance(connection, accountNumber);
                 if (balance >= 0) {
                     System.out.printf("계좌 잔액: %.0f원 \n", balance);
                 }
+
             } else {
                 System.out.println("출금에 실패했습니다.");
             }
-
         } catch (SQLException e) {
-            e.getStackTrace();
+            e.printStackTrace();
         }
-
     }
 
     // 계좌 송금
@@ -184,7 +195,7 @@ public class AccountManager {
         int accountNumber = rand.nextInt(1000000000);
 
         try (Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-             PreparedStatement statement = connection.prepareStatement("INSERT INTO accounts(account_number, user_name, balance) VALUES (?, ?, 0)")) {
+             PreparedStatement statement = connection.prepareStatement("INSERT INTO accounts(account_number, balance, user_id) VALUES (?, ?, 0)")) {
             statement.setString(1, String.valueOf(accountNumber));
             statement.setString(2, userName);
 
