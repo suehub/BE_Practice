@@ -21,6 +21,7 @@ import org.mockito.Mockito;
 
 
 class MockUserModelTest {
+
   private User mockUser;
 
   @InjectMocks
@@ -29,11 +30,13 @@ class MockUserModelTest {
   @Getter
   @Setter
   static class User {
+
     String name;
     String password;
     byte[] passwordBytes;
     byte[] uuidBytes;
-    public User(String name, String password){
+
+    public User(String name, String password) {
       this.name = name;
       this.password = password;
     }
@@ -55,8 +58,8 @@ class MockUserModelTest {
     Mockito.when(mockPstmt.executeUpdate()).thenReturn(1);
 
     // 테스트 실행
-    BankerRegistrationService bankerRegistrationService = new BankerRegistrationService(mockConn);
-    bankerRegistrationService.register((community.server.domain.user.User) mockUser);
+    BankerService bankerService = new BankerService(mockConn);
+    bankerService.register((community.server.domain.user.User) mockUser);
 
     // 검증 , 랜덤 바이트 추가는 모킹이 불가능
     Mockito.verify(mockPstmt).setBytes(1, uuidGenerator.getUuid());
@@ -76,29 +79,30 @@ class MockUserModelTest {
     System.out.println("-----------------");
     ResultSet rs;
     String query = "SELECT * FROM banker WHERE banker_name = ?";
-    try(Connection conn = ConnectionFactory.INSTANCE.getConnection()){
+    try (Connection conn = ConnectionFactory.INSTANCE.getConnection()) {
       PreparedStatement ps = conn.prepareStatement(query);
       ps.setString(1, username);
       rs = ps.executeQuery();
-      if(rs.next()){
+      if (rs.next()) {
         byte[] returnPassword = rs.getBytes("password");
-        if(PasswordEncryption.verifyPassword(returnPassword, password)){
+        if (PasswordEncryption.verifyPassword(returnPassword, password)) {
           System.out.println("Login successful");
-        }else{
+        } else {
           System.out.println("Login failed");
         }
       }
 
 
-    }catch (Exception e){
+    } catch (Exception e) {
       e.printStackTrace();
     }
 
   }
+
   @AfterEach
   void tearDown() {
     String name = mockUser.getName();
-    try(Connection conn = ConnectionFactory.INSTANCE.getConnection()) {
+    try (Connection conn = ConnectionFactory.INSTANCE.getConnection()) {
       PreparedStatement pstmt = conn.prepareStatement("delete from banker where banker_name = ?");
       pstmt.setString(1, name);
       int result = pstmt.executeUpdate();
@@ -106,8 +110,7 @@ class MockUserModelTest {
         System.out.println("delete success");
       }
       conn.commit();
-    }
-    catch (Exception e){
+    } catch (Exception e) {
       e.printStackTrace();
     }
   }

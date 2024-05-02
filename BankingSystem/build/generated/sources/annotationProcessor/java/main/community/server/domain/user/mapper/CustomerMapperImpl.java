@@ -1,11 +1,12 @@
 package community.server.domain.user.mapper;
 
 import community.server.domain.user.customer.Customer;
+import java.util.Arrays;
 import javax.annotation.processing.Generated;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-04-27T20:25:57+0900",
+    date = "2024-04-28T20:28:47+0900",
     comments = "version: 1.4.2.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-8.5.jar, environment: Java 21.0.1 (Oracle Corporation)"
 )
 public class CustomerMapperImpl implements CustomerMapper {
@@ -16,15 +17,18 @@ public class CustomerMapperImpl implements CustomerMapper {
             return null;
         }
 
-        String name = null;
-        String password = null;
-        String role = null;
+        byte[] customer_uuid = null;
+        String customer_name = null;
+        String customer_password = null;
 
-        name = customer.name();
-        password = customer.password();
-        role = customer.role();
+        byte[] customer_uuid1 = customer.customer_uuid();
+        if ( customer_uuid1 != null ) {
+            customer_uuid = Arrays.copyOf( customer_uuid1, customer_uuid1.length );
+        }
+        customer_name = customer.customer_name();
+        customer_password = customer.customer_password();
 
-        Customer customer1 = new Customer( name, password, role );
+        Customer customer1 = new Customer( customer_uuid, customer_name, customer_password );
 
         return customer1;
     }

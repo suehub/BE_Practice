@@ -26,6 +26,7 @@ public class PasswordEncryption {
     }
     return null;
   }
+
   public static boolean verifyPassword(byte[] storedPasswordHash, String passwordToVerify) {
     // 사용자가 입력한 비밀번호를 해시
     byte[] hashedPassword = hashPassword(passwordToVerify);

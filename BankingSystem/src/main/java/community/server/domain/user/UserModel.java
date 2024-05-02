@@ -11,10 +11,7 @@ import java.util.Scanner;
 
 public class UserModel {
 
-  private final User user;
-
-  public UserModel(User user) {
-    this.user = user;
+  public UserModel() {
   }
 
   void loginLogic(User user) {
