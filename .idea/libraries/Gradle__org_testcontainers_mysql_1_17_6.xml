@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="Gradle: org.testcontainers:mysql:1.17.6" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="org.testcontainers" artifactId="mysql" version="1.17.6" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.testcontainers/mysql/1.17.6/2a7c95202abd34a2688e4030eab97a41e615ea79/mysql-1.17.6.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

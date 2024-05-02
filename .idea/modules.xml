@@ -3,6 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/community.BankingSystem.iml" filepath="$PROJECT_DIR$/.idea/modules/community.BankingSystem.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/community.BankingSystem.main.iml" filepath="$PROJECT_DIR$/.idea/modules/community.BankingSystem.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/community.BankingSystem.test.iml" filepath="$PROJECT_DIR$/.idea/modules/community.BankingSystem.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/ycw_app/ycw_app.iml" filepath="$PROJECT_DIR$/ycw_app/ycw_app.iml" />
     </modules>
   </component>
