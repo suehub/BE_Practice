@@ -1,12 +1,0 @@
-
-‰
-java:S2095"HUse try-with-resources or close this "Connection" in a "finally" clause.(Ο„ÿϋÿÿÿÿJ$1cd82b03-0899-4759-b9ac-c7248a8ac7e6
-€
-java:S2583"DChange this condition so that it does not always evaluate to "false"(ωΐ®‡J$fc377e21-e619-4ab0-89ba-e489ef6d330d
-π
-java:S6548"®An Enum-based Singleton implementation was detected. Make sure the use of the Singleton pattern is required and an Enum-based implementation is the right one for the context.(ς€‡¬ÿÿÿÿÿJ$243b616c-7432-4dbe-bfb9-59def38a3c26
-w
-java:S6437"6Revoke and change this password, as it is compromised.(Ο„ÿϋÿÿÿÿJ$e97bc7a4-4842-4cc4-b83e-27586f34b2c5
-]
-java:S1116"Remove this empty statement.(τμϊÿÿÿÿJ$feec00c4-53a6-44b3-881f-007460d30543
-k	java:S106 "+Replace this use of System.out by a logger.(ÒκήϊÿÿÿÿJ$03f02636-ff4f-44cd-8d8c-d201a84f8ddb
