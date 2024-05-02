@@ -21,3 +21,5 @@ w
 GBankingSystem/src/main/java/community/server/domain/user/UserModel.java,6/3/636e12848ddd9b94989d4ac7445680d5cbb698a5
 9
 	README.md,8/e/8ec9a00bfd09b3190ac6b22251dbb1aa95a0579d
+?
+docs/CODEOWNERS,8/6/86922c0c901252d88e520943e3b81da720cc19c5
