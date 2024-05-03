@@ -8,7 +8,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Scanner;
 
-import static src.service.AccountService.log;
+import static src.Exception.GlobalException.log;
+
 
 public class HistoryService {
 

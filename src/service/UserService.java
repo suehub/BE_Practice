@@ -33,7 +33,23 @@ public class UserService {
         }
     }
 
-    public static boolean findUser(String userId) throws SQLException {
+    public static void createUser(String userId, String password){
+        PreparedStatement pstmt;
+        String sql = UserRepository.createUser();
+        try (Connection conn = JdbcConnection.JdbcConnection()) {
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, userId);
+            pstmt.setString(2, password);
+            pstmt.executeUpdate();
+            System.out.println("사용자가 생성되었습니다.");
+        }catch(Exception e) {
+            System.out.println("이미 존재하는 회원입니다.");
+            log.severe("이미 존재한 회원");
+//            GlobalException.logSevere("이미 존재한 회원");
+        }
+    }
+
+    public static boolean findUser(String userId){
         String sql = UserRepository.findUserId();
         try (Connection conn = JdbcConnection.JdbcConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {

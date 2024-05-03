@@ -19,7 +19,6 @@ import java.util.logging.Logger;
 import static src.Exception.GlobalException.log;
 
 public class AccountService {
-    final static Logger log = Logger.getGlobal();
     public static void createAccount(String userId) {
 
         Random random = new Random();
@@ -89,6 +88,33 @@ public class AccountService {
         }
 
     }
+    public static void deposits(String accountId, int amount){
+
+        if(!findOne(accountId)){
+            System.out.println("없는 계좌입니다.");
+            return;
+        }
+
+        if(amount <= 0){
+            System.out.println("0원 이하는 거래가 불가능합니다.");
+            return;
+        }
+        PreparedStatement pstmt;
+        String sql = AccountRepository.depositAccount();
+        try (Connection conn = JdbcConnection.JdbcConnection()) {
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, amount);
+            pstmt.setString(2, accountId);
+            pstmt.executeUpdate();
+            System.out.println("입금되었습니다.");
+        } catch(Exception e) {
+//            System.out.println("없는 계좌");
+            log.severe("DB 접근 에러");
+        } finally {
+            insertHistory(accountId, "입금", amount);
+        }
+
+    }
 
     public static boolean withdraw(Scanner scanner, String accountId) {
         System.out.println("출금 하실 금액을 입력해주세요.");
@@ -100,6 +126,31 @@ public class AccountService {
             log.severe("금액 문자 입력");
             scanner.nextLine();
         }
+
+        int balance = balance(accountId);
+        if(amount <= 0){
+            System.out.println("0원 이하는 거래가 불가능합니다.");
+            return false;
+        }
+        if(amount > balance){
+            System.out.println("출금 금액이 잔액을 초과했습니다.");
+            return false;
+        }
+        PreparedStatement pstmt;
+        String sql = AccountRepository.withdrawAccount();
+        try (Connection conn = JdbcConnection.JdbcConnection()) {
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, amount);
+            pstmt.setString(2, accountId);
+            pstmt.executeUpdate();
+        } catch(Exception e) {
+            log.severe("DB 접근 에러");
+        }
+        insertHistory(accountId, "출금", amount);
+        return true;
+    }
+
+    public static boolean withdraw(int amount, String accountId) {
 
         int balance = balance(accountId);
         if(amount <= 0){
