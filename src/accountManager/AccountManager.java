@@ -63,7 +63,7 @@ public class AccountManager {
 
             try (ResultSet resultSet = statement.executeQuery()) {
                 System.out.println("최근 거래 내역:");
-                System.out.println("날짜\t\t\t\t\t거래종류\t\t\t입출금자\t\t\t거래금액\t\t\t잔액");
+                System.out.println("거래날짜\t\t\t\t거래종류\t\t\t거래금액\t\t\t잔액");
                 while (resultSet.next()) {
                     String transactionType = resultSet.getString("transaction_type");
                     Timestamp transactionDate = resultSet.getTimestamp("transaction_date");
@@ -80,7 +80,7 @@ public class AccountManager {
                     // 날짜 형식 변환
                     String formattedDate = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(transactionDate);
 
-                    System.out.printf("%s\t%s\t%s\t%.2f\t\n", formattedDate, transactionType, transactionAccount, amount);
+                    System.out.printf("%s\t%s\t\t%.2f\t\n", formattedDate, transactionType, amount);
                 }
             }
         } catch (SQLException e) {
